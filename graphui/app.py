@@ -47,6 +47,7 @@ def tpl(template_name, **kwargs):
                     g=g,
                     graph=g.graph,
                     get_display_title=get_display_title,
+                    host=connection['host'],
                     **kwargs)
 
 def get_display_title(obj, fields=('title','name','displayName')):
