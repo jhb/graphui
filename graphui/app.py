@@ -67,25 +67,29 @@ def search():
     searchterm = request.values.get('searchterm', '').strip()
 
     out = AttrDict()
+    search_lower = searchterm.lower()
 
     query = f"""
         
         MATCH (x) WHERE 
             ANY(prop in keys(x) where 
-                any(word in apoc.convert.toStringList(x[prop]) where toLower(word) contains toLower("{searchterm}"))) or id(x) = toInteger("{searchterm}")
+                any(word in apoc.convert.toStringList(x[prop]) where toLower(word) contains "{search_lower}")) or 
+                  id(x) = toInteger("{search_lower}") or
+                  any(word in labels(x) where toLower(word) = "{search_lower}")
         RETURN distinct x
     """
 
     print(query)
-    r = g.graph.run(query, searchterm=searchterm)
+    r = g.graph.run(query)
     out['nodes']=[row['x'] for row in r]
 
     query = f"""
     
         MATCH ()-[x]->() WHERE 
             ANY(prop in keys(x) where 
-                any(word in apoc.convert.toStringList(x[prop]) where toLower(word) contains toLower("{searchterm}")))  or id(x) = toInteger("{searchterm}")
-        
+                any(word in apoc.convert.toStringList(x[prop]) where toLower(word) contains "{search_lower}"))  or 
+                id(x) =  toInteger("{search_lower}") or
+                toLower(type(x)) = "{search_lower}"
         return distinct x
 
         """

@@ -14,24 +14,25 @@
                 <h5>Incoming</h5>
                 <ul class="uk-list ">
                     <li tal:repeat="edge sorted(graph.relationships.match([None,node]),
-                                                key=lambda e: type(e).__name__)">
+                        key=lambda e: type(e).__name__)">
                         <span tal:omit-tag="" tal:define="other edge.start_node">
                             <a href="/node/${other.identity}">${get_display_title(other)}</a>
-                                -<a href="/edge/${edge.identity}">${type(edge).__name__}</a>&rarr;
+                                &nbsp;-<a href="/edge/${edge.identity}">${type(edge).__name__}</a>&rarr;
                         </span>
                     </li>
                 </ul>
             </div>
             <div>
-                <div style="height: 100%">
-                    <div
-                        class="uk-position-center uk-position-relative">${get_display_title(node)}</div>
+                <div style="height: 100%; text-align: center">
+                    <div class="uk-position-center uk-position-relative">
+                        ${get_display_title(node)}
+                    </div>
                 </div>
             </div>
             <div><h5>Outgoing</h5>
                 <ul class="uk-list ">
                     <li tal:repeat="edge sorted(graph.relationships.match([node,None]),
-                                                key=lambda e: type(e).__name__)">
+                        key=lambda e: type(e).__name__)">
                         <span tal:omit-tag="" tal:define="other edge.end_node">
 
                             -<a href="/edge/${edge.identity}">${type(edge).__name__}</a>&rarr;&nbsp;
