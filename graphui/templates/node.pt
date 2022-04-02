@@ -1,0 +1,46 @@
+<div metal:use-macro="templates['main'].macros['main']">
+    <div metal:fill-slot="content" id="content">
+        <h4>${get_display_title(node)}
+            <span class="uk-text-muted uk-margin-small-left">(${node.identity})</span><br>
+            <span class="uk-text-muted">${', '.join(node.labels)}</span>
+        </h4>
+
+        <span tal:define="obj node" metal:use-macro="templates['properties'].macros['properties']">
+        </span>
+        <div>&nbsp;</div>
+        <div>&nbsp;</div>
+        <div class="uk-grid uk-grid-divider">
+            <div>
+                <h5>Incoming</h5>
+                <ul class="uk-list ">
+                    <li tal:repeat="edge sorted(graph.relationships.match([None,node]),
+                                                key=lambda e: type(e).__name__)">
+                        <span tal:omit-tag="" tal:define="other edge.start_node">
+                            <a href="/node/${other.identity}">${get_display_title(other)}</a>
+                                -<a href="/edge/${edge.identity}">${type(edge).__name__}</a>&rarr;
+                        </span>
+                    </li>
+                </ul>
+            </div>
+            <div>
+                <div style="height: 100%">
+                    <div
+                        class="uk-position-center uk-position-relative">${get_display_title(node)}</div>
+                </div>
+            </div>
+            <div><h5>Outgoing</h5>
+                <ul class="uk-list ">
+                    <li tal:repeat="edge sorted(graph.relationships.match([node,None]),
+                                                key=lambda e: type(e).__name__)">
+                        <span tal:omit-tag="" tal:define="other edge.end_node">
+
+                            -<a href="/edge/${edge.identity}">${type(edge).__name__}</a>&rarr;&nbsp;
+                            <a href="/node/${other.identity}">${get_display_title(other)}</a>
+                        </span>
+                    </li>
+                </ul>
+            </div>
+
+        </div>
+    </div>
+</div>

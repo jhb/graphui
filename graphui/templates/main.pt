@@ -1,0 +1,33 @@
+<span tal:omit-tag="" metal:define-macro="main">
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>GraphUI ${template_name}</title>
+    <script src="/static/htmx.js"></script>
+
+    <link rel="stylesheet" href="/static/uikit/css/uikit.css"/>
+    <script src="/static/uikit/js/uikit.min.js"></script>
+    <script src="/static/uikit/js/uikit-icons.min.js"></script>
+    <script src="/static/jquery-3.6.0.min.js"></script>
+    <script src='/static/panzoom.min.js'></script>
+    <link rel="stylesheet" href="/static/fontawesome/css/all.css">
+    <link rel="stylesheet" href="/static/graphui.css"/>
+</head>
+<body style="padding-left: 2em">
+
+<h4 class="uk-margin-top uk-width-expand"><a href="/"><b>GraphUI</b></a>
+
+</h4>
+
+<hr width="100%" style="margin-left: 0"/>
+
+<div metal:define-slot="content" id="content">
+    main2
+</div>
+</body>
+</html>
+</span>

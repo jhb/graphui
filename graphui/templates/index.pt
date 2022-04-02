@@ -1,0 +1,23 @@
+<div metal:use-macro="templates['main'].macros['main']">
+
+    <div metal:fill-slot="content" id="content">
+        <div class="uk-margin-auto uk-text-center uk-margin-large-top">
+            <h1 class="uk-text-bold">GraphUI</h1>
+
+            <form action="/search">
+
+                    <input type="search" name="searchterm" value="${searchterm|nothing}"
+                              placeholder="Volltextsuche"
+                              class="uk-form-large uk-input uk-width-large"
+                              style="border: 1px solid grey"></input>
+                <div>&nbsp;</div>
+                <button class="uk-button uk-button-default" name="qtype" value="fulltext">Fulltext
+                </button>
+<!--?                <button class="uk-button uk-button-default" name="qtype" value="query">Query-->
+<!--?                </button>-->
+
+
+            </form>
+        </div>
+    </div>
+</div>

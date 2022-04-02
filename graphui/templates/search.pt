@@ -1,0 +1,30 @@
+<div metal:use-macro="templates['main'].macros['main']">
+
+
+
+    <div metal:fill-slot="content" id="content">
+        <h4>Search for "${searchterm}"</h4>
+
+        <h5>Nodes</h5>
+        <ul class="uk-list uk-list-hyphen">
+            <li tal:repeat="node result.nodes">
+                <a href="/node/${node.identity}">${get_display_title(node)}
+                    <span class="uk-text-muted uk-margin-small-left">${', '.join(node.labels)}</span>
+                    <span class="uk-text-muted uk-margin-small-left">(${node.identity})</span>
+                </a>
+            </li>
+        </ul>
+
+        <h5>Edges</h5>
+        <ul class="uk-list uk-list-hyphen">
+            <li tal:repeat="edge result.relationships">
+                <a href="/edge/${edge.identity}">
+                    ${get_display_title(edge.start_node)}
+                    &nbsp;-${type(edge).__name__}&rarr;&nbsp;
+                    ${get_display_title(edge.end_node)}
+                    <span class="uk-text-muted  uk-margin-small-left">(${edge.identity})</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+</div>

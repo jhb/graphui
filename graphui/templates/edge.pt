@@ -1,0 +1,10 @@
+<div metal:use-macro="templates['main'].macros['main']">
+    <div metal:fill-slot="content" id="content">
+        <h4><a href="/node/${edge.start_node.identity}">${get_display_title(edge.start_node)}</a>
+                    &nbsp;-${type(edge).__name__}&rarr;&nbsp;
+            <a href="/node/${edge.end_node.identity}">${get_display_title(edge.end_node)}</a>
+            <span class="uk-text-muted  uk-margin-small-left">(${edge.identity})</span></h4>
+        <span tal:define="obj edge" metal:use-macro="templates['properties'].macros['properties']">
+    </span>
+    </div>
+</div>
