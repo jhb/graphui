@@ -66,27 +66,33 @@ def search():
 
     searchterm = request.values.get('searchterm', '').strip()
 
-    query = f"""
-        call {{
-        MATCH p=(x) WHERE 
-            ANY(prop in keys(x) where 
-                any(word in apoc.convert.toStringList(x[prop]) where toLower(word) contains toLower("{searchterm}"))) 
-        RETURN p
+    out = AttrDict()
 
-        UNION
+    query = f"""
         
-        MATCH p=()-[x]->() WHERE 
+        MATCH (x) WHERE 
             ANY(prop in keys(x) where 
-                any(word in apoc.convert.toStringList(x[prop]) where toLower(word) contains toLower("{searchterm}"))) 
-        RETURN p
-        }} return apoc.agg.graph(p) as g
+                any(word in apoc.convert.toStringList(x[prop]) where toLower(word) contains toLower("{searchterm}"))) or id(x) = toInteger("{searchterm}")
+        RETURN distinct x
+    """
+
+    print(query)
+    r = g.graph.run(query, searchterm=searchterm)
+    out['nodes']=[row['x'] for row in r]
+
+    query = f"""
+    
+        MATCH ()-[x]->() WHERE 
+            ANY(prop in keys(x) where 
+                any(word in apoc.convert.toStringList(x[prop]) where toLower(word) contains toLower("{searchterm}")))  or id(x) = toInteger("{searchterm}")
+        
+        return distinct x
 
         """
+
     print(query)
     r = g.graph.run(query,searchterm=searchterm)
-    out = AttrDict(next(r)['g'])
-    out['nodes'] = sorted(out['nodes'], key=lambda n: get_display_title(n))
-    out['relationships'] = sorted(out['relationships'], key=lambda r: type(r).__name__)
+    out['relationships'] = [row['x'] for row in r]
     return tpl('search',result=out, searchterm=searchterm)
 
 

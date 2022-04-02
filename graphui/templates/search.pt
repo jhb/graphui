@@ -7,7 +7,7 @@
 
         <h5>Nodes</h5>
         <ul class="uk-list uk-list-hyphen">
-            <li tal:repeat="node result.nodes">
+            <li tal:repeat="node sorted(result.nodes, key=lambda n: get_display_title(n))">
                 <a href="/node/${node.identity}">${get_display_title(node)}
                     <span class="uk-text-muted uk-margin-small-left">${', '.join(node.labels)}</span>
                     <span class="uk-text-muted uk-margin-small-left">(${node.identity})</span>
@@ -17,7 +17,7 @@
 
         <h5>Edges</h5>
         <ul class="uk-list uk-list-hyphen">
-            <li tal:repeat="edge result.relationships">
+            <li tal:repeat="edge sorted(result.relationships, key=lambda e: (type(e).__name__,get_display_title(e.start_node)))">
                 <a href="/edge/${edge.identity}">
                     ${get_display_title(edge.start_node)}
                     &nbsp;-${type(edge).__name__}&rarr;&nbsp;
