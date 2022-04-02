@@ -17,10 +17,13 @@
     <link rel="stylesheet" href="/static/fontawesome/css/all.css">
     <link rel="stylesheet" href="/static/graphui.css"/>
 </head>
-<body style="padding-left: 2em">
+<body style="padding-left: 2em"
+      hx-select="#content"
+      hx-target="#content"
+      hx-boost="true">
 
 <h4 class="uk-margin-top uk-width-expand"><a href="/"><b>GraphUI</b></a>
-
+<span class="uk-text-muted uk-text-small">@${host}</span>
 </h4>
 
 <hr width="100%" style="margin-left: 0"/>
