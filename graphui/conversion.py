@@ -18,6 +18,7 @@ from interchange.time import Date as date, \
                              Time as time, \
                              DateTime as datetime, \
                              Duration as duration
+from interchange.geo import WGS84Point, CartesianPoint
 from decimal import Decimal
 
 import pytest
@@ -70,7 +71,7 @@ def convert(key: str, value):
 def guess_type(value):
     typ = type(value)
     print(typ)
-    if typ in [int, float, bool, date, time, duration]:
+    if typ in [int, float, bool, date, time, duration, WGS84Point, CartesianPoint]:
         return typ.__name__.lower()
     elif typ == datetime:
         return 'dt'

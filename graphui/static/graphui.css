@@ -1,33 +1,4 @@
 
-.prop_key {
-    grid-area: key
-}
-
-.prop_value {
-    grid-area: value
-}
-
-.prop_type {
-    grid-area: type
-}
-
-.prop_edit {
-    grid-area: edit
-}
-
-.prop_delete {
-    grid-area: delete
-}
-
-.property {
-    display: grid;
-    grid-template-columns: max-content max-content max-content;
-    grid-template-areas:
-        "key .  delete"
-        "value edit ."
-        "type type .";
-
-}
 
 .property div, ul {border: 0px solid red;}
 
