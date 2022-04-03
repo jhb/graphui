@@ -1,14 +1,15 @@
-from pprint import pprint
+import os
 
 import flask
 import py2neo as py2neo
-from flask import Flask, request, jsonify, g
-from flask import redirect, url_for
 from chameleon import PageTemplateLoader
-import os
+from flask import Flask, request, g
+
+import conversion
 
 connection = dict(host='localhost', user='neo4j', password='admin')
 app = Flask(__name__, static_url_path="/static")
+
 
 @app.before_request
 def before():
@@ -25,17 +26,21 @@ def teardown(exception):
         if hasattr(g, 'tx') and hasattr(g, 'graph'):
             g.graph.commit(g.tx)
 
+
 class AttrDict(dict):
 
     def __getattr__(self, item):
         return self[item]
+
 
 def get_templates():
     return PageTemplateLoader(os.path.join(os.path.dirname(__file__), 'templates'), '.pt',
                               boolean_attributes={"selected", "checked"},
                               auto_reload=True)
 
+
 templates = get_templates()
+
 
 def tpl(template_name, **kwargs):
     # this is not the best place because of performance
@@ -48,16 +53,18 @@ def tpl(template_name, **kwargs):
                     graph=g.graph,
                     get_display_title=get_display_title,
                     host=connection['host'],
+                    conversion=conversion,
                     **kwargs)
 
-def get_display_title(obj, fields=('title','name','displayName')):
-    return next((obj[field] for field in fields if field in obj), obj.identity)
 
+def get_display_title(obj, fields=('title', 'name', 'displayName')):
+    return next((obj[field] for field in fields if field in obj), obj.identity)
 
 
 @app.route('/')
 def get_index():
     return tpl('index')
+
 
 @app.route('/search')
 def search():
@@ -73,42 +80,47 @@ def search():
         
         MATCH (x) WHERE 
             ANY(prop in keys(x) where 
-                any(word in apoc.convert.toStringList(x[prop]) where toLower(word) contains "{search_lower}")) or 
-                  id(x) = toInteger("{search_lower}") or
-                  any(word in labels(x) where toLower(word) = "{search_lower}")
+                any(word in apoc.convert.toStringList(x[prop]) where toLower(word) contains $searchterm)
+                or toLower(prop) contains $searchterm
+                ) or 
+                  id(x) = toInteger($searchterm) or
+                  any(word in labels(x) where toLower(word) = $searchterm)
         RETURN distinct x
     """
 
-    print(query)
-    r = g.graph.run(query)
-    out['nodes']=[row['x'] for row in r]
+    print(query.replace('$searchterm', f'"{search_lower}"'))
+    r = g.graph.run(query, searchterm=search_lower)
+    out['nodes'] = [row['x'] for row in r]
 
     query = f"""
     
         MATCH ()-[x]->() WHERE 
             ANY(prop in keys(x) where 
-                any(word in apoc.convert.toStringList(x[prop]) where toLower(word) contains "{search_lower}"))  or 
-                id(x) =  toInteger("{search_lower}") or
-                toLower(type(x)) = "{search_lower}"
+                any(word in apoc.convert.toStringList(x[prop]) where toLower(word) contains $searchterm)
+                or toLower(prop) contains $searchterm
+                )  or 
+                id(x) =  toInteger($searchterm) or
+                toLower(type(x)) = $searchterm
         return distinct x
 
         """
 
-    print(query)
-    r = g.graph.run(query,searchterm=searchterm)
+    print(query.replace('$searchterm', f'"{search_lower}"'))
+    r = g.graph.run(query, searchterm=search_lower)
     out['relationships'] = [row['x'] for row in r]
-    return tpl('search',result=out, searchterm=searchterm)
+    return tpl('search', result=out, searchterm=searchterm)
 
 
 @app.route('/node/<int:nodeid>')
 def get_node(nodeid):
     node = g.graph.nodes[nodeid]
-    return tpl('node',node=node)
+    return tpl('node', node=node)
+
 
 @app.route('/edge/<int:edgeid>')
 def get_edge(edgeid):
     edge = g.graph.relationships[edgeid]
-    return tpl('edge',edge=edge)
+    return tpl('edge', edge=edge)
 
 
 def get_property_keys():
@@ -116,10 +128,10 @@ def get_property_keys():
     return [r['propertyKey'] for r in result]
 
 
-
 @app.route('/favicon.ico')
 def favicon():
     return ''
+
 
 if __name__ == '__main__':
     app.run('0.0.0.0', use_reloader=True, port=5003)

@@ -15,8 +15,9 @@ A helper to just get the variable name
 """
 
 from interchange.time import Date as date, \
-                             time as time, \
-                             DateTime as datetime
+                             Time as time, \
+                             DateTime as datetime, \
+                             Duration as duration
 from decimal import Decimal
 
 import pytest
@@ -68,7 +69,8 @@ def convert(key: str, value):
 
 def guess_type(value):
     typ = type(value)
-    if typ in [int, float, bool, date, time]:
+    print(typ)
+    if typ in [int, float, bool, date, time, duration]:
         return typ.__name__.lower()
     elif typ == datetime:
         return 'dt'
@@ -92,7 +94,7 @@ guess_type_data = [
         (42.0, 'float'),
         (True, 'bool'),
         (date(2021, 10, 16), 'date'),
-        (time(10, 41), 'time'),
+        (time(10, 41, 00), 'time'),
         (datetime(2021, 10, 16, 10, 41), 'dt'),
         (Decimal('23.42'), 'dec'),
         ('foo\nbar', 'text'),
@@ -102,7 +104,7 @@ guess_type_data = [
         ([1.0, 2.0], 'list:float'),
         ([True, False], 'list:bool'),
         ((date(2021, 10, 16),), 'list:date'),
-        ((time(10, 41),), 'list:time'),
+        ((time(10, 41, 00),), 'list:time'),
         ((datetime(2021, 10, 16, 10, 41),), 'list:dt'),
         ((Decimal('23.42'),), 'list:dec'),
 ]
@@ -123,7 +125,7 @@ convert_data = [
         ('foo:bool', '0', False),
         ('foo:bool', 'bar', True),
         ('foo:date', '2021-10-16', date(2021, 10, 16)),
-        ('foo:time', '10:42', time(10, 42)),
+        ('foo:time', '10:42', time(10, 42, 00)),
         ('foo:dt', '2021-10-16 10:42', datetime(2021, 10, 16, 10, 42)),
         ('foo:dec', '42.23', Decimal('42.23')),
         ('foo:list', '1\n2\n3', ('1', '2', '3')),

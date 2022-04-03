@@ -1,14 +1,30 @@
 <span tal:omit-tag="" metal:define-macro="properties">
     <h5>Properties</h5>
-    <span class="uk-description-list">
-        <span tal:repeat="(key,value) sorted(obj.items())" tal:omit-tag="">
-            <dt>${key}</dt>
-            <dd tal:condition="type(value)==list">
-                <ul class="uk-list uk-list-hyphen">
-                    <li tal:repeat="entry value">${entry}</li>
-                </ul>
-            </dd>
-            <dd tal:condition="type(value)!=list">${value}</dd>
-        </span>
-    </span>
+    <div class="properties">
+        <div class="property uk-margin-bottom" tal:repeat="(key,value) sorted(obj.items())">
+
+            <div class="prop_key"><label class="uk-text-bold"
+                                         for="property-${key}}">${key}</label></div>
+
+
+            <div class="prop_value"   tal:condition="type(value)==list"><ul
+                class="uk-list uk-list-hyphen">
+                <li tal:repeat="entry value">${entry}</li>
+            </ul></div>
+
+            <div class="prop_value" tal:condition="type(value)!=list">${value}</div>
+
+
+            <div class="prop_type uk-text-muted">${conversion.guess_type(value)}</div>
+
+            <div class="prop_edit"><a uk-icon="icon: pencil;  ratio: 0.75"
+                                      class="uk-link-muted "></a></div>
+
+            <div class="prop_delete"><a uk-icon="icon: minus-circle;  ratio: 0.75"
+                                        class="uk-link-muted"></a></div>
+
+
+
+        </div>
+    </div>
 </span>

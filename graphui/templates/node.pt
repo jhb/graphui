@@ -11,7 +11,7 @@
         <div>&nbsp;</div>
         <div class="uk-grid uk-grid-divider">
             <div>
-                <h5>Incoming</h5>
+                <h5 class="uk-text-uppercase">Incoming</h5>
                 <ul class="uk-list ">
                     <li tal:repeat="edge sorted(graph.relationships.match([None,node]),
                         key=lambda e: type(e).__name__)">
@@ -29,7 +29,7 @@
                     </div>
                 </div>
             </div>
-            <div><h5>Outgoing</h5>
+            <div><h5 class="uk-text-uppercase">Outgoing</h5>
                 <ul class="uk-list ">
                     <li tal:repeat="edge sorted(graph.relationships.match([node,None]),
                         key=lambda e: type(e).__name__)">

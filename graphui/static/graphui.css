@@ -1,0 +1,42 @@
+
+.prop_key {
+    grid-area: key
+}
+
+.prop_value {
+    grid-area: value
+}
+
+.prop_type {
+    grid-area: type
+}
+
+.prop_edit {
+    grid-area: edit
+}
+
+.prop_delete {
+    grid-area: delete
+}
+
+.property {
+    display: grid;
+    grid-template-columns: max-content max-content max-content;
+    grid-template-areas:
+        "key .  delete"
+        "value edit ."
+        "type type .";
+
+}
+
+.property div, ul {border: 0px solid red;}
+
+@media (min-width: 40em) {
+    .properties {display: table}
+    .property {display: table-row}
+    .prop_key, .prop_value, .prop_type, .prop_edit, .prop_delete {
+        display: table-cell;
+        padding: 0.5em 0.5em;}
+    .property ul {margin-left: -1em}
+
+}
