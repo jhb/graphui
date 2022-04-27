@@ -31,7 +31,7 @@ query = """MERGE (n:PROPNODE {name:'propnode',
                      list_point3d: [point({latitude:13.43, longitude:56.21, height: 2}),
                                     point({latitude:14.43, longitude:57.21, height: 3})],       
                      list_pointC2d: [point({x:13.43, y:56.21}),point({x:14.43, y:57.21})],
-                     list_pointC3d: [point({x:13.43, y:56.21, z: 2}),point({x:14.43, y:57.21, z: 3})]                       
+                     list_pointC3d: [point({x:13.43, y:56.21, z: 2}),point({x:14.43, y:57.21, z: 3})]
                      }) return id(n)"""
 
 print(graph.run(query))

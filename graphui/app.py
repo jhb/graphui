@@ -76,6 +76,8 @@ def search():
     out = AttrDict()
     search_lower = searchterm.lower()
 
+    # TODO mix in optional search in _._searchable_text
+
     query = f"""
         
         MATCH (x) WHERE 
