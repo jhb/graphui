@@ -1,4 +1,5 @@
 import os
+from pprint import pprint
 
 import flask
 import py2neo as py2neo
@@ -114,6 +115,7 @@ def search():
 
 @app.route('/node/<int:nodeid>')
 def get_node(nodeid):
+    pprint(conversion.parse_form(request.values.items()))
     node = g.graph.nodes[nodeid]
     return tpl('node', node=node)
 

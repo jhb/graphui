@@ -3,33 +3,40 @@
     <form>
         <div class="properties">
             <div class="property uk-margin-bottom"
-                 tal:repeat="(key,value) sorted(obj.items())">
-                <span tal:omit-tag="" tal:define="guessed_type conversion.guess_type(value)">
+                 tal:repeat="(key,entry) sorted(obj.items())">
+                <span tal:omit-tag="" tal:define="guessed_type conversion.guess_type(entry)">
 
                     <div class="prop_key">
-                        <label class="uk-text-bold"
-                                                 for="property-${key}}">${key}</label>
+                        <label class="uk-text-bold" for="property-${key}}">${key}</label>
                     </div>
 
 
-                    <div class="prop_value"
-                        tal:condition="type(value)==list">
-                        <ul
-                        class="uk-list uk-list-hyphen">
-                        <li tal:repeat="entry value">${entry}</li>
+                    <div class="prop_value" tal:condition="type(entry)==list">
+                        <ul class="uk-list uk-list-hyphen">
+                            <li tal:repeat="value entry">
+                                <span tal:omit-tag=""
+                                      tal:define="name key+'.'+str(repeat.value.index);
+                                                  widgetname conversion.widgetname(value)">
+
+                                    <c metal:use-macro="templates['widgets'].macros[widgetname]" />
+
+                                </span>
+
+                            </li>
                         </ul>
                     </div>
 
-                    <div class="prop_value" tal:condition="type(value)!=list">
-                        <div tal:define='name key;widgetname conversion.widgetname(value)'>
+                    <div class="prop_value" tal:condition="type(entry)!=list">
+                        <div tal:define='name key;
+                                         value entry;
+                                         widgetname conversion.widgetname(entry)'>
                             <c metal:use-macro="templates['widgets'].macros[widgetname]" />
-
                         </div>
 
                     </div>
 
 
-                    <div class="prop_type uk-text-muted">${guessed_type}<br> ${type(value)}</div>
+                    <div class="prop_type uk-text-muted">${guessed_type}<br> ${type(entry)}</div>
 
                     <div class="prop_edit"><a uk-icon="icon: pencil;  ratio: 0.75"
                                               class="uk-link-muted "></a></div>

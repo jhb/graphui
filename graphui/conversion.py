@@ -37,8 +37,7 @@ def str2bool(string):
 
 def widgetname(value):
     typ = guess_type(value)
-    widget_map = dict(dt='datetime',
-                      float='number',
+    widget_map = dict(float='number',
                       int='number',
                       )
     return widget_map.get(typ,typ)
@@ -50,7 +49,7 @@ converters = dict(
         bool=str2bool,
         date=date.fromisoformat,
         time=str2time,
-        dt=datetime.from_iso_format,
+        datetime=datetime.from_iso_format,
         dec=Decimal,
         text=str,
         list=list
@@ -78,11 +77,10 @@ def convert(key: str, value):
 
 def guess_type(value):
     typ = type(value)
-    print(typ)
     if typ in [int, float, bool, date, time, duration, WGS84Point, CartesianPoint]:
         return typ.__name__.lower()
     elif typ == datetime:
-        return 'dt'
+        return 'datetime'
     elif typ == Decimal:
         return 'dec'
     elif typ in (str,):
@@ -98,7 +96,7 @@ guess_type_data = [
         (True, 'bool'),
         (date(2021, 10, 16), 'date'),
         (time(10, 41, 00), 'time'),
-        (datetime(2021, 10, 16, 10, 41), 'dt'),
+        (datetime(2021, 10, 16, 10, 41), 'datetime'),
         (Decimal('23.42'), 'dec'),
         ('foo\nbar', 'text'),
         (['1', '2', '3'], 'list:str'),
@@ -108,7 +106,7 @@ guess_type_data = [
         ([True, False], 'list:bool'),
         ((date(2021, 10, 16),), 'list:date'),
         ((time(10, 41, 00),), 'list:time'),
-        ((datetime(2021, 10, 16, 10, 41),), 'list:dt'),
+        ((datetime(2021, 10, 16, 10, 41),), 'list:datetime'),
         ((Decimal('23.42'),), 'list:dec'),
 ]
 
@@ -129,7 +127,7 @@ convert_data = [
         ('foo:bool', 'bar', True),
         ('foo:date', '2021-10-16', date(2021, 10, 16)),
         ('foo:time', '10:42', time(10, 42, 00)),
-        ('foo:dt', '2021-10-16 10:42', datetime(2021, 10, 16, 10, 42)),
+        ('foo:datetime', '2021-10-16 10:42', datetime(2021, 10, 16, 10, 42)),
         ('foo:dec', '42.23', Decimal('42.23')),
         ('foo:list', '1\n2\n3', ('1', '2', '3')),
         ('foo:list:int', '1\n2\n3', (1, 2, 3)),
@@ -140,7 +138,7 @@ convert_data = [
                                                      date(2021, 10, 16))),
         ('foo:list:time', '10:41:00\n10:41:01', (time(10, 41, 0),
                                                  time(10, 41, 1))),
-        ('foo:list:dt', '2021-10-16 10:42\n2021-10-16 10:42:01', (datetime(2021, 10, 16, 10, 42),
+        ('foo:list:datetime', '2021-10-16 10:42\n2021-10-16 10:42:01', (datetime(2021, 10, 16, 10, 42),
                                                                   datetime(2021, 10, 16, 10, 42, 1))),
         ('foo:list:dec', '23.42\n42.23', (Decimal('23.42'),
                                           Decimal('42.23'))),
@@ -158,3 +156,55 @@ def test_convert(key, value, result):
 
 def test_get_varname():
     assert get_varname('foo:list:tc') == 'foo'
+
+def parse_form(data): # iterable of tuples with key value elements
+    out = {}
+    for key, value in data:
+        parts = key.split('.')
+        print(parts)
+        if len(parts) == 1:
+            out[key] = value
+        elif len(parts) == 2:
+            first, second = parts
+            try:
+                pos = int(second)
+                the_list = out.setdefault(first,[])
+                if pos == len(the_list):
+                    the_list.append(value)
+                elif pos < len(the_list):
+                    the_list[pos] = value
+            except ValueError:
+                the_dict = out.setdefault(first,dict())
+                the_dict[second] = value
+        elif len(parts) == 3:
+            first, second, third = parts
+            pos = int(second)
+            the_list = out.setdefault(first,[])
+            if pos==len(the_list):
+                the_list.append({})
+            the_dict = the_list[pos]
+            the_dict[third] = value
+
+    return out
+
+testdata = [('direct', 1),
+            ('list.0', 2),
+            ('list.1', 3),
+            ('sub.one',4),
+            ('sub.two',5),
+            ('sublist.0.one',6),
+            ('sublist.1.two',7)
+            ]
+
+# print(parse_form(testdata))
+
+def test_parse_form():
+
+
+    expected = dict(direct=1,
+                    list=[2,3],
+                    sub=dict(one=4,
+                             two=5),
+                    sublist=[dict(one=6),
+                             dict(two=7)])
+    assert parse_form(testdata) == expected
