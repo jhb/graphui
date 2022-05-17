@@ -1,45 +1,46 @@
 <span tal:omit-tag="" metal:define-macro="properties">
     <h5>Properties</h5>
-    <div class="properties">
-        <div class="property uk-margin-bottom" tal:repeat="(key,value) sorted(obj.items())">
-            <span tal:omit-tag="" tal:define="guessed_type conversion.guess_type(value)">
+    <form>
+        <div class="properties">
+            <div class="property uk-margin-bottom"
+                 tal:repeat="(key,value) sorted(obj.items())">
+                <span tal:omit-tag="" tal:define="guessed_type conversion.guess_type(value)">
 
-                <div class="prop_key"><label class="uk-text-bold"
-                                             for="property-${key}}">${key}</label></div>
+                    <div class="prop_key">
+                        <label class="uk-text-bold"
+                                                 for="property-${key}}">${key}</label>
+                    </div>
 
 
-                <div class="prop_value"   tal:condition="type(value)==list"><ul
-                    class="uk-list uk-list-hyphen">
-                    <li tal:repeat="entry value">${entry}</li>
-                </ul></div>
+                    <div class="prop_value"
+                        tal:condition="type(value)==list">
+                        <ul
+                        class="uk-list uk-list-hyphen">
+                        <li tal:repeat="entry value">${entry}</li>
+                        </ul>
+                    </div>
 
-                <div class="prop_value" tal:condition="type(value)!=list"><input
-                    tal:define="types dict(date='date',
-                                           float='number',
-                                           int='number',
-                                           bool='checkbox',
-                                           xdt='datetime-local')"
+                    <div class="prop_value" tal:condition="type(value)!=list">
+                        <div tal:define='name key;widgetname conversion.widgetname(value)'>
+                            <c metal:use-macro="templates['widgets'].macros[widgetname]" />
 
-                    class="uk-input" type="${types.get(guessed_type,'text')}" value="${value}">
-
-                    <div tal:define='name "foo";widgetname conversion.widgetname(value)'>
-                        <c metal:use-macro="templates['widgets'].macros[widgetname]" />
+                        </div>
 
                     </div>
 
-                </div>
 
+                    <div class="prop_type uk-text-muted">${guessed_type}<br> ${type(value)}</div>
 
-                <div class="prop_type uk-text-muted">${guessed_type}<br> ${type(value)}</div>
+                    <div class="prop_edit"><a uk-icon="icon: pencil;  ratio: 0.75"
+                                              class="uk-link-muted "></a></div>
 
-                <div class="prop_edit"><a uk-icon="icon: pencil;  ratio: 0.75"
-                                          class="uk-link-muted "></a></div>
+                    <div class="prop_delete"><a uk-icon="icon: minus-circle;  ratio: 0.75"
+                                                class="uk-link-muted"></a></div>
 
-                <div class="prop_delete"><a uk-icon="icon: minus-circle;  ratio: 0.75"
-                                            class="uk-link-muted"></a></div>
+                </span>
 
-            </span>
-
+            </div>
         </div>
-    </div>
+        <input type="submit">
+    </form>
 </span>
