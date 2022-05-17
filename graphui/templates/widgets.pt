@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+
+<form tal:define="name 'the_name'; value 'the_value'">
+
+    <input metal:define-macro="str"     name="${name}" class="uk-input" type="text"
+                                        value="${value}">
+
+    <input metal:define-macro="date"     name="${name}" class="uk-input" type="date"
+                                         value="${value}">
+
+    <input metal:define-macro="time"     name="${name}" class="uk-input" type="time"
+                                         value="${value.hour}:${round(value.minute)}:${round(value.second)}">
+
+    <input metal:define-macro="datetime" name="${name}" class="uk-input" type="datetime-local"
+                                         value="${value.date()}T${value.hour}:${round(value.minute)}:${round(value.second)}"
+                                         step="1">
+
+    <input metal:define-macro="number"   name="${name}" class="uk-input" type="number"
+                                         value="${value}">
+
+    <input metal:define-macro="bool"     name="${name}" class="uk-checkbox"
+                                         type="checkbox" tal:attributes="checked value">
+
+    <textarea metal:define-macro="text" name="${name}" class="uk-textarea">${value}</textarea>
+
+    <span metal:define-macro="duration"
+          tal:define="(years,months,days) value.years_months_days;
+                      (hours,minutes,seconds) value.hours_minutes_seconds;
+                      fields dict(years=years,months=months,days=days,hours=hours,minutes=minutes,seconds=seconds)"
+          class="uk-flex uk-flex-left ">
+        <div tal:repeat="(key,v) fields.items()">
+            ${key.capitalize()}<br>
+            <input name="${name}" class="uk-input" type="number"
+                   value="${round(v)}">
+
+        </div>
+    </span>
+
+    <span metal:define-macro="wgs84point" class="uk-flex uk-flex-left">
+        <div>
+            Longitude<br>
+            <input name="${name}" class="uk-input" type="number" value="${value.longitude}">
+        </div>
+        <div>
+            Latitude<br>
+            <input name="${name}" class="uk-input" type="number" value="${value.latitude}">
+        </div>
+        <div tal:condition="len(value)>2">
+            Height<br>
+            <input name="${name}" class="uk-input" type="number" value="${value.height}">
+        </div>
+
+    </span>
+
+    <span metal:define-macro="cartesianpoint" class="uk-flex uk-flex-left">
+        <div>
+            X<br>
+            <input name="${name}" class="uk-input" type="number" value="${value.x}">
+        </div>
+        <div>
+            Y<br>
+            <input name="${name}" class="uk-input" type="number" value="${value.y}">
+        </div>
+        <div tal:condition="len(value)>2">
+            Z<br>
+            <input name="${name}" class="uk-input" type="number" value="${value.z}">
+        </div>
+
+    </span>
+</form>
+
+</body>
+</html>

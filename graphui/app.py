@@ -19,11 +19,10 @@ def before():
 
 @app.teardown_request
 def teardown(exception):
-    if exception:
-        if hasattr(g, 'tx') and hasattr(g, 'graph'):
+    if hasattr(g, 'tx') and hasattr(g, 'graph'):
+        if exception:
             g.graph.rollback(g.tx)
-    else:
-        if hasattr(g, 'tx') and hasattr(g, 'graph'):
+        else:
             g.graph.commit(g.tx)
 
 

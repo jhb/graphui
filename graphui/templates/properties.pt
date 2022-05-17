@@ -17,9 +17,17 @@
                     tal:define="types dict(date='date',
                                            float='number',
                                            int='number',
-                                           bool='checkbox')"
+                                           bool='checkbox',
+                                           xdt='datetime-local')"
 
-                    class="uk-input" type="${types.get(guessed_type,'text')}" value="${value}"></div>
+                    class="uk-input" type="${types.get(guessed_type,'text')}" value="${value}">
+
+                    <div tal:define='name "foo";widgetname conversion.widgetname(value)'>
+                        <c metal:use-macro="templates['widgets'].macros[widgetname]" />
+
+                    </div>
+
+                </div>
 
 
                 <div class="prop_type uk-text-muted">${guessed_type}<br> ${type(value)}</div>

@@ -35,6 +35,14 @@ def str2bool(string):
         return bool(string)
 
 
+def widgetname(value):
+    typ = guess_type(value)
+    widget_map = dict(dt='datetime',
+                      float='number',
+                      int='number',
+                      )
+    return widget_map.get(typ,typ)
+
 converters = dict(
         int=int,
         float=float,
@@ -78,15 +86,9 @@ def guess_type(value):
     elif typ == Decimal:
         return 'dec'
     elif typ in (str,):
-        if '\n' in value:
-            return 'text'
-        else:
-            return 'str'
+        return 'text' if '\n' in value else 'str'
     elif typ in (list, tuple):
-        if value:
-            return 'list:' + guess_type(value[0])
-        else:  # default
-            return 'list:str'
+        return f'list:{guess_type(value[0])}' if value else 'list:str'
 
 
 guess_type_data = [
