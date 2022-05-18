@@ -4,7 +4,7 @@
 
 @media (min-width: 40em) {
     .properties, .subproperties {display: table}
-    .property, .subproperty {display: table-row}
+    .property, .subproperty, .prop_row {display: table-row}
     .prop_key, .prop_value, .prop_type, .prop_edit, .prop_delete,
     .subprop_key, .subprop_value, .subprop_type, .subprop_edit, .subprop_delete {
         display: table-cell;

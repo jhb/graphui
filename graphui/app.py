@@ -42,6 +42,7 @@ def get_templates():
 templates = get_templates()
 
 
+
 def tpl(template_name, **kwargs):
     # this is not the best place because of performance
     template = templates[template_name]
@@ -54,8 +55,8 @@ def tpl(template_name, **kwargs):
                     get_display_title=get_display_title,
                     host=connection['host'],
                     conversion=conversion,
+                    get_widget=get_widget,
                     **kwargs)
-
 
 def get_display_title(obj, fields=('title', 'name', 'displayName')):
     return next((obj[field] for field in fields if field in obj), obj.identity)
@@ -113,11 +114,26 @@ def search():
     return tpl('search', result=out, searchterm=searchterm)
 
 
-@app.route('/node/<int:nodeid>')
+@app.route('/node/<int:nodeid>', methods=['GET','POST'])
 def get_node(nodeid):
     pprint(conversion.parse_form(request.values.items()))
     node = g.graph.nodes[nodeid]
     return tpl('node', node=node)
+
+@app.route('/node/<int:node_or_id>/<path>')
+@app.route('/node/<int:node_or_id>/<path>/<mode>')
+def get_widget(node_or_id, path, mode='view'):
+    node = g.graph.nodes[node_or_id] if type(node_or_id) == int else node_or_id
+    entry = conversion.fetch_entry(node, path)
+    widget_name = conversion.widgetname(entry, mode)
+    widget_file = f'widget_{mode}'
+    return tpl(widget_file,
+               obj = node,
+               widget_name=widget_name,
+               value = entry,
+               path = path,
+               name=path)
+
 
 
 @app.route('/edge/<int:edgeid>')

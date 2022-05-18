@@ -15,9 +15,9 @@ A helper to just get the variable name
 """
 
 from interchange.time import Date as date, \
-                             Time as time, \
-                             DateTime as datetime, \
-                             Duration as duration
+    Time as time, \
+    DateTime as datetime, \
+    Duration as duration
 from interchange.geo import WGS84Point, CartesianPoint
 from decimal import Decimal
 
@@ -35,12 +35,17 @@ def str2bool(string):
         return bool(string)
 
 
-def widgetname(value):
+def widgetname(value, mode='view'):
     typ = guess_type(value)
-    widget_map = dict(float='number',
-                      int='number',
-                      )
-    return widget_map.get(typ,typ)
+    if mode == 'edit':
+        widget_map = dict(float='number',
+                          int='number',
+                          )
+        return widget_map.get(typ, typ)+'_edit'
+    else:
+        return 'str_view'
+
+
 
 converters = dict(
         int=int,
@@ -139,7 +144,7 @@ convert_data = [
         ('foo:list:time', '10:41:00\n10:41:01', (time(10, 41, 0),
                                                  time(10, 41, 1))),
         ('foo:list:datetime', '2021-10-16 10:42\n2021-10-16 10:42:01', (datetime(2021, 10, 16, 10, 42),
-                                                                  datetime(2021, 10, 16, 10, 42, 1))),
+                                                                        datetime(2021, 10, 16, 10, 42, 1))),
         ('foo:list:dec', '23.42\n42.23', (Decimal('23.42'),
                                           Decimal('42.23'))),
         ('foo:text', 'one\ntwo three\nfour', 'one\ntwo three\nfour'),
@@ -157,52 +162,61 @@ def test_convert(key, value, result):
 def test_get_varname():
     assert get_varname('foo:list:tc') == 'foo'
 
-def parse_form(data): # iterable of tuples with key value elements
+
+def parse_form(data):  # iterable of tuples with key value elements
     out = {}
     for key, value in data:
         parts = key.split('.')
-        print(parts)
         if len(parts) == 1:
             out[key] = value
         elif len(parts) == 2:
             first, second = parts
             try:
                 pos = int(second)
-                the_list = out.setdefault(first,[])
+                the_list = out.setdefault(first, [])
                 if pos == len(the_list):
                     the_list.append(value)
                 elif pos < len(the_list):
                     the_list[pos] = value
             except ValueError:
-                the_dict = out.setdefault(first,dict())
+                the_dict = out.setdefault(first, dict())
                 the_dict[second] = value
         elif len(parts) == 3:
             first, second, third = parts
             pos = int(second)
-            the_list = out.setdefault(first,[])
-            if pos==len(the_list):
+            the_list = out.setdefault(first, [])
+            if pos == len(the_list):
                 the_list.append({})
             the_dict = the_list[pos]
             the_dict[third] = value
-
     return out
+
+
+def fetch_entry(obj, path):
+    parts = path.split('.')
+    if len(parts) == 1:
+        return obj.get(path)
+    elif len(parts) == 2:
+        first, second = parts
+        value = obj.get(first)
+        return value[int(second)]
+
 
 testdata = [('direct', 1),
             ('list.0', 2),
             ('list.1', 3),
-            ('sub.one',4),
-            ('sub.two',5),
-            ('sublist.0.one',6),
-            ('sublist.1.two',7)
+            ('sub.one', 4),
+            ('sub.two', 5),
+            ('sublist.0.one', 6),
+            ('sublist.1.two', 7)
             ]
+
 
 # print(parse_form(testdata))
 
 def test_parse_form():
-
-
     expected = dict(direct=1,
-                    list=[2,3],
+                    list=[2, 3],
                     sub=dict(one=4,
                              two=5),
                     sublist=[dict(one=6),

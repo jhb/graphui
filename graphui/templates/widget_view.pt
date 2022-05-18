@@ -1,0 +1,1 @@
+<span metal:use-macro="templates['widgets'].macros['str_view']"></span>

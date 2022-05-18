@@ -1,0 +1,8 @@
+<form method="POST" hx-post="">
+<span metal:use-macro="templates['widgets'].macros[widget_name]"></span>
+    <br>
+    <input type="submit" value="senden">
+    <a hx-get="${obj.identity}/${path}/view"
+     hx-target="#prop_value_${name.replace('.','_')}"
+    hx-select="span">cancel</a>
+</form>

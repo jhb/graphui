@@ -1,53 +1,44 @@
 <span tal:omit-tag="" metal:define-macro="properties">
     <h5>Properties</h5>
-    <form>
-        <div class="properties">
-            <div class="property uk-margin-bottom"
-                 tal:repeat="(key,entry) sorted(obj.items())">
-                <span tal:omit-tag="" tal:define="guessed_type conversion.guess_type(entry)">
+    <div class="properties" hx-disinherit="*">
+        <div tal:repeat="item sorted(obj.items())" tal:omit-tag="">
+            <span tal:omit-tag=""
+                  tal:define="(key, entry) item;
+                              guessed_type conversion.guess_type(entry);
+                              old key|nothing;
+                              values type(entry)==list and entry or [entry]">
+
+                <div class="prop_row" tal:repeat="value values"><span tal:define="name type(entry)==list and key+'.'+str(repeat.value.index) or key" tal:omit-tag="">
 
                     <div class="prop_key">
-                        <label class="uk-text-bold" for="property-${key}}">${key}</label>
+                        <label class="uk-text-bold"
+                               for="property-${key}}"
+                               tal:condition="repeat.value.start">${key}</label>
                     </div>
 
-
-                    <div class="prop_value" tal:condition="type(entry)==list">
-                        <ul class="uk-list uk-list-hyphen">
-                            <li tal:repeat="value entry">
-                                <span tal:omit-tag=""
-                                      tal:define="name key+'.'+str(repeat.value.index);
-                                                  widgetname conversion.widgetname(value)">
-
-                                    <c metal:use-macro="templates['widgets'].macros[widgetname]" />
-
-                                </span>
-
-                            </li>
-                        </ul>
+                    <div class="prop_value" id="prop_value_${name.replace('.','_')}">
+                        <span tal:condition="type(entry)==list">-&nbsp;</span>
+                        <span tal:replace="structure get_widget(obj, name)"></span>
                     </div>
 
-                    <div class="prop_value" tal:condition="type(entry)!=list">
-                        <div tal:define='name key;
-                                         value entry;
-                                         widgetname conversion.widgetname(entry)'>
-                            <c metal:use-macro="templates['widgets'].macros[widgetname]" />
-                        </div>
+                    <div class="prop_edit" hx-disinherit="*" hx-boost="unset">
+                        <a uk-icon="icon: pencil;  ratio: 0.75"
+                           class="uk-link-muted "
+                           hx-get="${obj.identity}/${name}/edit"
+                           hx-target="#prop_value_${name.replace('.','_')}"
+                           hx-select="form"
 
+
+                        ></a>
                     </div>
-
-
-                    <div class="prop_type uk-text-muted">${guessed_type}<br> ${type(entry)}</div>
-
-                    <div class="prop_edit"><a uk-icon="icon: pencil;  ratio: 0.75"
-                                              class="uk-link-muted "></a></div>
 
                     <div class="prop_delete"><a uk-icon="icon: minus-circle;  ratio: 0.75"
                                                 class="uk-link-muted"></a></div>
 
-                </span>
+                </span></div>
 
-            </div>
+            </span>
+
         </div>
-        <input type="submit">
-    </form>
+    </div>
 </span>
