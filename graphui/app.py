@@ -55,12 +55,18 @@ def tpl(template_name, **kwargs):
                     get_display_title=get_display_title,
                     host=connection['host'],
                     conversion=conversion,
-                    get_widget=get_widget,
+                    get_obj_path=get_obj_path,
+                    get_obj_type=get_obj_type,
                     **kwargs)
 
 def get_display_title(obj, fields=('title', 'name', 'displayName')):
     return next((obj[field] for field in fields if field in obj), obj.identity)
 
+def get_obj_type(obj):
+    return 'node' if type(obj) == py2neo.data.Node else 'edge'
+
+def get_obj_path(obj):
+    return f'/{get_obj_type(obj)}/{obj.identity}'
 
 @app.route('/')
 def get_index():
@@ -121,20 +127,49 @@ def get_node(nodeid):
     return tpl('node', node=node)
 
 @app.route('/node/<int:node_or_id>/<path>')
-@app.route('/node/<int:node_or_id>/<path>/<mode>')
-def get_widget(node_or_id, path, mode='view'):
+@app.route('/node/<int:node_or_id>/<path>/view')
+def property_view(node_or_id, path):
+    mode = 'view'
     node = g.graph.nodes[node_or_id] if type(node_or_id) == int else node_or_id
-    entry = conversion.fetch_entry(node, path)
-    widget_name = conversion.widgetname(entry, mode)
-    widget_file = f'widget_{mode}'
-    return tpl(widget_file,
+    prop = conversion.fetch_prop(node, path)
+    widget_name = conversion.widgetname(prop, mode)
+    template = 'property'
+    out =  tpl(template,
+               mode=mode,
                obj = node,
-               widget_name=widget_name,
-               value = entry,
+               prop = prop,
+               value = prop,
                path = path,
                name=path)
+    return (out, 200, {"HX-Push":"false"})
 
+@app.route('/<obj_type>/<int:obj_or_id>/<path>/edit', methods=['GET'])
+@app.route('/<obj_type>/<int:obj_or_id>/<path>', methods=['POST'])
+def property_edit(obj_type, obj_or_id, path):
+    container = getattr(g.graph, f'{obj_type}s')
+    obj = container[obj_or_id] if type(obj_or_id) == int else obj_or_id
+    prop = conversion.fetch_prop(obj, path)
+    typ = conversion.guess_type(prop)
+    if request.method == 'POST':
+        data = conversion.parse_form(request.values.items())
 
+        # TODO proper conversion/validation etc.
+        if typ == 'bool':
+            data[path]=bool(data)
+
+        # store obj
+        # redirect to property sheet
+        print(data)
+        print(prop)
+
+    widget_name = conversion.widgetname(prop, 'edit')
+    return tpl('property',
+               mode = 'edit',
+               obj = obj,
+               prop = prop,
+               path = path,
+               obj_type=obj_type,
+               name=path), 200, {"HX-Push":"false"}
 
 @app.route('/edge/<int:edgeid>')
 def get_edge(edgeid):

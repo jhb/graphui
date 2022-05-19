@@ -192,7 +192,7 @@ def parse_form(data):  # iterable of tuples with key value elements
     return out
 
 
-def fetch_entry(obj, path):
+def fetch_prop(obj, path):
     parts = path.split('.')
     if len(parts) == 1:
         return obj.get(path)

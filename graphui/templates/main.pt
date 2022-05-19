@@ -8,6 +8,7 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>GraphUI ${template_name}</title>
     <script src="/static/htmx.js"></script>
+    <script src="/static/debug.js"></script>
 
     <link rel="stylesheet" href="/static/uikit/css/uikit.css"/>
     <script src="/static/uikit/js/uikit.min.js"></script>

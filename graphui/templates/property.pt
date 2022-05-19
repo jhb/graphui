@@ -1,0 +1,38 @@
+<div metal:use-macro="templates['main'].macros['main']">
+    <div metal:fill-slot="content" >
+        <h4><a href="${get_obj_path(obj)}">${get_display_title(obj)}
+            <span class="uk-text-muted uk-margin-small-left">(${obj.identity})</span></a>
+        </h4>
+
+        <h4>Property "${path.split('.')[0]}"</h4>
+
+        <form method="POST"
+              action="${get_obj_path(obj)}/${path}"
+              id="content"
+              class="uk-form uk-form-width-large"
+              hx-target="#prop_value_${name.replace('.','_')}"
+              hx-push-url="false">
+            <span tal:omit-tag="" metal:define-macro="property_core">
+                <div tal:define="values type(prop)==list and prop or [prop]"
+                     tal:repeat="value values">
+                    <span tal:condition="mode =='view' and type(prop)==list">- &nbsp;</span>
+                    <hr tal:condition="mode == 'edit' and type(prop)==list and not repeat.value.start"
+                        class="uk-margin uk-margin-top uk-margin-bottom"
+                        style="width: 70%; margin: auto">
+                    <span tal:define="widget_name conversion.widgetname(value, mode); name path+'.'+str(repeat.value.index)"
+                          metal:use-macro="templates['widgets'].macros[widget_name]"></span>
+                </div>
+            </span>
+            <div tal:condition="mode=='edit'"
+                 class="uk-margin-top">
+                <input type="submit" value="senden">
+                <a href="${get_obj_path(obj)}/${path}">cancel</a>
+            </div>
+
+        </form>
+        <div tal:condition="mode=='view'"
+             class="uk-margin-top">
+            <a href="${get_obj_path(obj)}/${path}/edit">edit</a>
+        </div>
+    </div>
+</div>

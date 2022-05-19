@@ -1,44 +1,35 @@
 <span tal:omit-tag="" metal:define-macro="properties">
     <h5>Properties</h5>
-    <div class="properties" hx-disinherit="*">
+    <div class="properties" hx-push-url="false">
         <div tal:repeat="item sorted(obj.items())" tal:omit-tag="">
-            <span tal:omit-tag=""
-                  tal:define="(key, entry) item;
-                              guessed_type conversion.guess_type(entry);
-                              old key|nothing;
-                              values type(entry)==list and entry or [entry]">
+            <div tal:define="(propname, prop) item; guessed_type conversion.guess_type(prop); name propname"
+                 class="prop_row">
+                <div class="prop_propname">
+                    <label class="uk-text-bold"
+                           for="property-${propname}}">
+                        ${propname}
+                    </label>
+                </div>
 
-                <div class="prop_row" tal:repeat="value values"><span tal:define="name type(entry)==list and key+'.'+str(repeat.value.index) or key" tal:omit-tag="">
+                <div class="prop_value" id="prop_value_${propname}" tal:define="mode 'view'; path propname">
+                    <span metal:use-macro="templates['property'].macros['property_core']"></span>
+                </div>
 
-                    <div class="prop_key">
-                        <label class="uk-text-bold"
-                               for="property-${key}}"
-                               tal:condition="repeat.value.start">${key}</label>
-                    </div>
+                <div class="prop_edit">
+                    <a  uk-icon="icon: pencil;  ratio: 0.75"
+                        class="uk-link-muted "
+                        href="${get_obj_path(obj)}/${propname}/edit"
+                        hx-target="#prop_value_${propname}"
+                        hx-push-url="false"
 
-                    <div class="prop_value" id="prop_value_${name.replace('.','_')}">
-                        <span tal:condition="type(entry)==list">-&nbsp;</span>
-                        <span tal:replace="structure get_widget(obj, name)"></span>
-                    </div>
+                        xhx-ext="debug"></a>
+                </div>
 
-                    <div class="prop_edit" hx-disinherit="*" hx-boost="unset">
-                        <a uk-icon="icon: pencil;  ratio: 0.75"
-                           class="uk-link-muted "
-                           hx-get="${obj.identity}/${name}/edit"
-                           hx-target="#prop_value_${name.replace('.','_')}"
-                           hx-select="form"
-
-
-                        ></a>
-                    </div>
-
-                    <div class="prop_delete"><a uk-icon="icon: minus-circle;  ratio: 0.75"
-                                                class="uk-link-muted"></a></div>
-
-                </span></div>
-
-            </span>
-
+                <div class="prop_delete">
+                    <a uk-icon="icon: minus-circle;  ratio: 0.75"
+                       class="uk-link-muted"></a>
+                </div>
+            </div>
         </div>
     </div>
 </span>
