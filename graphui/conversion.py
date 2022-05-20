@@ -34,25 +34,34 @@ def str2bool(string):
     except ValueError:
         return bool(string)
 
+
 def data2cartesianpoint(d):
     return CartesianPoint([float(v) for v in d.values()])
+
 
 def data2wgs84point(d):
     return WGS84Point([float(v) for v in d.values()])
 
+
 def data2duration(d):
-    return duration(**{k:float(v) for k,v in d.items()})
+    return duration(**{k: float(v) for k, v in d.items()})
+
 
 def widgetname(value, mode='view'):
     typ = guess_type(value)
+    print('guessed', typ)
     if mode == 'edit':
         widget_map = dict(float='number',
                           int='number',
+                          str='text',
                           )
-        return widget_map.get(typ, typ)+'_edit'
+        return widget_map.get(typ, typ) + '_edit'
     else:
-        return 'str_view'
-
+        widget_map = dict(str='text',
+                          )
+        name = widget_map.get(typ, 'str') + '_view'
+        print(name)
+        return name
 
 
 converters = dict(
@@ -66,9 +75,9 @@ converters = dict(
         dec=Decimal,
         text=str,
         list=list,
-        cartesianpoint = data2cartesianpoint,
-        wgs84point = data2wgs84point,
-        duration = data2duration
+        cartesianpoint=data2cartesianpoint,
+        wgs84point=data2wgs84point,
+        duration=data2duration
 )
 
 
@@ -100,12 +109,14 @@ def guess_type(value):
     elif typ == Decimal:
         return 'dec'
     elif typ in (str,):
-        return 'text' if '\n' in value else 'str'
+        return 'text' if '\n' in value and 0 else 'str'
     elif typ in (list, tuple):
         return f'list:{guess_type(value[0])}' if value else 'list:str'
 
+
 def guess_inner_type(value):
     return guess_type(value).split(':')[-1]
+
 
 guess_type_data = [
         (42, 'int'),

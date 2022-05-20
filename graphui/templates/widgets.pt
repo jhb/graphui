@@ -19,7 +19,12 @@
 <input metal:define-macro="bool_edit"     name="${name}" class="uk-checkbox"
                                           type="checkbox" tal:attributes="checked value">
 
-<textarea metal:define-macro="text_edit" name="${name}" class="uk-textarea">${value}</textarea>
+<span metal:define-macro="text_view" tal:content="structure value.replace('\n','<br>')"></span>
+
+<textarea metal:define-macro="text_edit"
+          name="${name}"
+          class="uk-textarea"
+          rows="${value.count('\n')+2}">${value}</textarea>
 
 <span metal:define-macro="duration_edit"
      tal:define="(years,months,days) value.years_months_days;

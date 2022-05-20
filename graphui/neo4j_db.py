@@ -50,6 +50,9 @@ class Graph:
     def get_edge(self, id):
         return self.run('match (start)-[r]->(target) where id(r)=$id return r', id=id).single()['r']
 
+    def update_edge(self, id, props):
+        return self.run('match ()-[r]->() where id(r)=$id set r=$props return r', id=id, props=props).single()['r']
+
     def edges(self, start_id=None, target_id=None):
         wheres = []
         if start_id:

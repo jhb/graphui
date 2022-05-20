@@ -127,25 +127,8 @@ def get_node(nodeid):
     node = g.graph.get_node(nodeid)
     return tpl('node', node=node)
 
-@app.route('/node/<int:node_or_id>/<path>')
-@app.route('/node/<int:node_or_id>/<path>/view')
-def property_view(node_or_id, path):
-    mode = 'view'
-    node = g.graph.get_node(node_or_id) if type(node_or_id) == int else node_or_id
-    prop = conversion.fetch_prop(node, path)
-    widget_name = conversion.widgetname(prop, mode)
-    template = 'property'
-    out =  tpl(template,
-               mode=mode,
-               obj = node,
-               prop = prop,
-               value = prop,
-               path = path,
-               name=path)
-    return (out, 200, {"HX-Push":"false"})
-
 @app.route('/<obj_type>/<int:obj_or_id>/<path>/<mode>', methods=['GET'])
-@app.route('/<obj_type>/<int:obj_or_id>/<path>', methods=['POST'])
+@app.route('/<obj_type>/<int:obj_or_id>/<path>', methods=['GET','POST'])
 def property_edit(obj_type, obj_or_id, path, mode='view'):
     fetch = getattr(g.graph,f'get_{obj_type}')
     obj = fetch(obj_or_id) if type(obj_or_id) == int else obj_or_id
@@ -156,8 +139,8 @@ def property_edit(obj_type, obj_or_id, path, mode='view'):
     prop = obj[path]
     if request.method == 'POST':
         data = conversion.parse_form(request.values.items())[path]
-        print(data)
-        typ = conversion.guess_type(prop).split
+        typ = conversion.guess_type(prop).split(':')[0]
+        print('typ',typ)
         if type(prop) != list:
             prop = [prop]
             data = [data]
@@ -166,8 +149,7 @@ def property_edit(obj_type, obj_or_id, path, mode='view'):
 
         newprops = dict(obj)
         new = [converter(data[i]) for i,p in enumerate(prop)]
-        newprops[path] = new if type(prop) == list else new[0]
-
+        newprops[path] = new if typ == 'list' else new[0]
         update = getattr(g.graph,f'update_{obj_type}')
         update(obj.id,newprops)
 
