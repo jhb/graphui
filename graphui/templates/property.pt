@@ -19,7 +19,8 @@
                     <hr tal:condition="mode == 'edit' and type(prop)==list and not repeat.value.start"
                         class="uk-margin uk-margin-top uk-margin-bottom"
                         style="width: 70%; margin: auto">
-                    <span tal:define="widget_name conversion.widgetname(value, mode); name path+'.'+str(repeat.value.index)"
+                    <span tal:define="widget_name conversion.widgetname(value, mode);
+                                      name path+'.'+str(repeat.value.index) if type(prop)==list else path"
                           metal:use-macro="templates['widgets'].macros[widget_name]"></span>
                 </div>
             </span>

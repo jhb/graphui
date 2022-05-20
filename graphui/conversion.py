@@ -34,6 +34,14 @@ def str2bool(string):
     except ValueError:
         return bool(string)
 
+def data2cartesianpoint(d):
+    return CartesianPoint([float(v) for v in d.values()])
+
+def data2wgs84point(d):
+    return WGS84Point([float(v) for v in d.values()])
+
+def data2duration(d):
+    return duration(**{k:int(v) for k,v in d.items()})
 
 def widgetname(value, mode='view'):
     typ = guess_type(value)
@@ -57,7 +65,10 @@ converters = dict(
         datetime=datetime.from_iso_format,
         dec=Decimal,
         text=str,
-        list=list
+        list=list,
+        cartesianpoint = data2cartesianpoint,
+        wgs84point = data2wgs84point,
+        duration = data2duration
 )
 
 
@@ -93,6 +104,8 @@ def guess_type(value):
     elif typ in (list, tuple):
         return f'list:{guess_type(value[0])}' if value else 'list:str'
 
+def guess_inner_type(value):
+    return guess_type(value).split(':')[-1]
 
 guess_type_data = [
         (42, 'int'),

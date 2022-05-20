@@ -23,6 +23,7 @@ def teardown(exception):
     if hasattr(g, 'tx') and hasattr(g, 'graph'):
         if exception:
             g.graph.rollback(g.tx)
+            del(g.tx)
         else:
             g.graph.commit(g.tx)
 
@@ -148,19 +149,28 @@ def property_view(node_or_id, path):
 def property_edit(obj_type, obj_or_id, path):
     container = getattr(g.graph, f'{obj_type}s')
     obj = container[obj_or_id] if type(obj_or_id) == int else obj_or_id
-    prop = conversion.fetch_prop(obj, path)
-    typ = conversion.guess_type(prop)
+
+    # TODO non existent prop
+
+
+    prop = obj[path]
     if request.method == 'POST':
-        data = conversion.parse_form(request.values.items())
-
-        # TODO proper conversion/validation etc.
-        if typ == 'bool':
-            data[path]=bool(data)
-
-        # store obj
-        # redirect to property sheet
+        data = conversion.parse_form(request.values.items())[path]
         print(data)
-        print(prop)
+        typ = conversion.guess_type(prop).split
+        if type(prop) != list:
+            prop = [prop]
+            data = [data]
+        inner_type = conversion.guess_inner_type(prop)
+        converter = conversion.converters[inner_type]
+
+        new = [converter(data[i]) for i,p in enumerate(prop)]
+        obj[path] = new if type(prop) == list else new[0]
+        print(obj)
+        g.graph.push(obj)
+
+        print(str(new))
+
 
     widget_name = conversion.widgetname(prop, 'edit')
     return tpl('property',
@@ -185,6 +195,13 @@ def get_property_keys():
 @app.route('/favicon.ico')
 def favicon():
     return ''
+
+@app.route('/jhb')
+def jhb():
+    obj = g.graph.nodes[172]
+    print(obj)
+    return str(obj['point3d'])
+
 
 
 if __name__ == '__main__':
