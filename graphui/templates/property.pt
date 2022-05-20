@@ -15,7 +15,7 @@
             <span tal:omit-tag="" metal:define-macro="property_core">
                 <div tal:define="values type(prop)==list and prop or [prop]"
                      tal:repeat="value values">
-                    <span tal:condition="mode =='view' and type(prop)==list">- &nbsp;</span>
+                    <span tal:define="prefix '-' if mode =='view' and type(prop)==list else '&nbsp;'">${prefix} &nbsp;</span>
                     <hr tal:condition="mode == 'edit' and type(prop)==list and not repeat.value.start"
                         class="uk-margin uk-margin-top uk-margin-bottom"
                         style="width: 70%; margin: auto">

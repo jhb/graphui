@@ -7,7 +7,7 @@
                                           value="${value}">
 
 <input metal:define-macro="time_edit"     name="${name}" class="uk-input" type="time"
-                                          value="${value.hour}:${round(value.minute)}:${round(value.second)}">
+                                          value="${value.hour}:${round(value.minute)}:${round(value.second)}" step="1">
 
 <input metal:define-macro="datetime_edit" name="${name}" class="uk-input" type="datetime-local"
                                           value="${value.date()}T${value.hour}:${round(value.minute)}:${round(value.second)}"
