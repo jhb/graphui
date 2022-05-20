@@ -14,11 +14,11 @@ A helper to just get the variable name
 'foo'
 """
 
-from interchange.time import Date as date, \
+from neo4j.time import Date as date, \
     Time as time, \
     DateTime as datetime, \
     Duration as duration
-from interchange.geo import WGS84Point, CartesianPoint
+from neo4j.spatial import WGS84Point, CartesianPoint
 from decimal import Decimal
 
 import pytest
@@ -41,7 +41,7 @@ def data2wgs84point(d):
     return WGS84Point([float(v) for v in d.values()])
 
 def data2duration(d):
-    return duration(**{k:int(v) for k,v in d.items()})
+    return duration(**{k:float(v) for k,v in d.items()})
 
 def widgetname(value, mode='view'):
     typ = guess_type(value)

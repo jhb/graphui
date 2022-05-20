@@ -1,7 +1,7 @@
 <div metal:use-macro="templates['main'].macros['main']">
     <div metal:fill-slot="content" >
         <h4><a href="${get_obj_path(obj)}">${get_display_title(obj)}
-            <span class="uk-text-muted uk-margin-small-left">(${obj.identity})</span></a>
+            <span class="uk-text-muted uk-margin-small-left">(${obj.id})</span></a>
         </h4>
 
         <h4>Property "${path.split('.')[0]}"</h4>

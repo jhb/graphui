@@ -1,8 +1,8 @@
 <div metal:use-macro="templates['main'].macros['main']">
     <div metal:fill-slot="content" id="content">
         <h4>${get_display_title(node)}
-            <span class="uk-text-muted uk-margin-small-left">(${node.identity})</span><br>
-            <span class="uk-text-muted">${', '.join(node.labels)}</span>
+            <span class="uk-text-muted uk-margin-small-left">(${node.id})</span><br>
+            <span class="uk-text-muted">${', '.join(node.labels)} &nbsp;</span>
         </h4>
 
         <span tal:define="obj node" metal:use-macro="templates['properties'].macros['properties']">
@@ -13,11 +13,11 @@
             <div>
                 <h5 class="uk-text-uppercase">Incoming</h5>
                 <ul class="uk-list ">
-                    <li tal:repeat="edge sorted(graph.relationships.match([None,node]),
+                    <li tal:repeat="edge sorted(graph.edges(None,node.id),
                         key=lambda e: type(e).__name__)">
                         <span tal:omit-tag="" tal:define="other edge.start_node">
-                            <a href="/node/${other.identity}">${get_display_title(other)}</a>
-                                &nbsp;-<a href="/edge/${edge.identity}">${type(edge).__name__}</a>&rarr;
+                            <a href="/node/${other.id}">${get_display_title(other)}</a>
+                                &nbsp;-<a href="/edge/${edge.id}">${type(edge).__name__}</a>&rarr;
                         </span>
                     </li>
                 </ul>
@@ -31,12 +31,12 @@
             </div>
             <div><h5 class="uk-text-uppercase">Outgoing</h5>
                 <ul class="uk-list ">
-                    <li tal:repeat="edge sorted(graph.relationships.match([node,None]),
+                    <li tal:repeat="edge sorted(graph.edges(node.id,None),
                         key=lambda e: type(e).__name__)">
                         <span tal:omit-tag="" tal:define="other edge.end_node">
 
-                            -<a href="/edge/${edge.identity}">${type(edge).__name__}</a>&rarr;&nbsp;
-                            <a href="/node/${other.identity}">${get_display_title(other)}</a>
+                            -<a href="/edge/${edge.id}">${type(edge).__name__}</a>&rarr;&nbsp;
+                            <a href="/node/${other.id}">${get_display_title(other)}</a>
                         </span>
                     </li>
                 </ul>

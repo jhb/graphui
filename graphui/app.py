@@ -2,25 +2,24 @@ import os
 from pprint import pprint
 
 import flask
-import py2neo as py2neo
 from chameleon import PageTemplateLoader
 from flask import Flask, request, g
-
+from neo4j_db import Connection
 import conversion
+import neo4j
 
-connection = dict(host='localhost', user='neo4j', password='admin')
+connection = Connection("neo4j://localhost:7687", 'neo4j', 'admin')
 app = Flask(__name__, static_url_path="/static")
 
 
 @app.before_request
 def before():
-    g.graph = py2neo.Graph(**connection)
-    g.tx = g.graph.begin()
-
+    g.graph = connection.graph(debug=1)
+    g.tx = g.graph.tx
 
 @app.teardown_request
 def teardown(exception):
-    if hasattr(g, 'tx') and hasattr(g, 'graph'):
+    if hasattr(g, 'graph') and hasattr(g, 'tx'):
         if exception:
             g.graph.rollback(g.tx)
             del(g.tx)
@@ -54,20 +53,21 @@ def tpl(template_name, **kwargs):
                     g=g,
                     graph=g.graph,
                     get_display_title=get_display_title,
-                    host=connection['host'],
+                    host=connection.uri,
                     conversion=conversion,
                     get_obj_path=get_obj_path,
                     get_obj_type=get_obj_type,
                     **kwargs)
 
 def get_display_title(obj, fields=('title', 'name', 'displayName')):
-    return next((obj[field] for field in fields if field in obj), obj.identity)
+    return next((obj[field] for field in fields if field in obj), obj.id)
 
 def get_obj_type(obj):
-    return 'node' if type(obj) == py2neo.data.Node else 'edge'
+
+    return 'node' if type(obj) == neo4j.graph.Node else 'edge'
 
 def get_obj_path(obj):
-    return f'/{get_obj_type(obj)}/{obj.identity}'
+    return f'/{get_obj_type(obj)}/{obj.id}'
 
 @app.route('/')
 def get_index():
@@ -124,14 +124,14 @@ def search():
 @app.route('/node/<int:nodeid>', methods=['GET','POST'])
 def get_node(nodeid):
     pprint(conversion.parse_form(request.values.items()))
-    node = g.graph.nodes[nodeid]
+    node = g.graph.get_node(nodeid)
     return tpl('node', node=node)
 
 @app.route('/node/<int:node_or_id>/<path>')
 @app.route('/node/<int:node_or_id>/<path>/view')
 def property_view(node_or_id, path):
     mode = 'view'
-    node = g.graph.nodes[node_or_id] if type(node_or_id) == int else node_or_id
+    node = g.graph.get_node(node_or_id) if type(node_or_id) == int else node_or_id
     prop = conversion.fetch_prop(node, path)
     widget_name = conversion.widgetname(prop, mode)
     template = 'property'
@@ -144,11 +144,11 @@ def property_view(node_or_id, path):
                name=path)
     return (out, 200, {"HX-Push":"false"})
 
-@app.route('/<obj_type>/<int:obj_or_id>/<path>/edit', methods=['GET'])
+@app.route('/<obj_type>/<int:obj_or_id>/<path>/<mode>', methods=['GET'])
 @app.route('/<obj_type>/<int:obj_or_id>/<path>', methods=['POST'])
-def property_edit(obj_type, obj_or_id, path):
-    container = getattr(g.graph, f'{obj_type}s')
-    obj = container[obj_or_id] if type(obj_or_id) == int else obj_or_id
+def property_edit(obj_type, obj_or_id, path, mode='view'):
+    fetch = getattr(g.graph,f'get_{obj_type}')
+    obj = fetch(obj_or_id) if type(obj_or_id) == int else obj_or_id
 
     # TODO non existent prop
 
@@ -164,17 +164,20 @@ def property_edit(obj_type, obj_or_id, path):
         inner_type = conversion.guess_inner_type(prop)
         converter = conversion.converters[inner_type]
 
+        newprops = dict(obj)
         new = [converter(data[i]) for i,p in enumerate(prop)]
-        obj[path] = new if type(prop) == list else new[0]
-        print(obj)
-        g.graph.push(obj)
+        newprops[path] = new if type(prop) == list else new[0]
 
-        print(str(new))
+        update = getattr(g.graph,f'update_{obj_type}')
+        update(obj.id,newprops)
 
+        obj = fetch(obj.id)
+        prop = obj[path]
+        mode = 'view'
 
     widget_name = conversion.widgetname(prop, 'edit')
     return tpl('property',
-               mode = 'edit',
+               mode = mode,
                obj = obj,
                prop = prop,
                path = path,
@@ -183,7 +186,7 @@ def property_edit(obj_type, obj_or_id, path):
 
 @app.route('/edge/<int:edgeid>')
 def get_edge(edgeid):
-    edge = g.graph.relationships[edgeid]
+    edge = g.graph.get_edge(edgeid)
     return tpl('edge', edge=edge)
 
 
@@ -198,7 +201,7 @@ def favicon():
 
 @app.route('/jhb')
 def jhb():
-    obj = g.graph.nodes[172]
+    obj = g.graphnodes[172]
     print(obj)
     return str(obj['point3d'])
 
