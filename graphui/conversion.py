@@ -48,8 +48,9 @@ def data2duration(d):
 
 
 def widgetname(value, mode='view'):
+    # sourcery skip: inline-immediately-returned-variable, use-fstring-for-concatenation
     typ = guess_type(value)
-    print('guessed', typ)
+    # print('guessed', typ)
     if mode == 'edit':
         widget_map = dict(float='number',
                           int='number',
@@ -60,8 +61,9 @@ def widgetname(value, mode='view'):
         widget_map = dict(str='text',
                           )
         name = widget_map.get(typ, 'str') + '_view'
-        print(name)
+        # print(name)
         return name
+
 
 
 converters = dict(
@@ -79,6 +81,31 @@ converters = dict(
         wgs84point=data2wgs84point,
         duration=data2duration
 )
+
+field_types = dict(
+        str="Text",
+        int="Integer",
+        float="Float",
+        bool="Boolean",
+        date="Date",
+        time="Time",
+        datetime="Datetime",
+        cartesianpoint="Point (Cartesian: x, y, z)",
+        wgs84point="Point (WGS84: long, lat, height)")
+
+def get_default(typ):
+    defaults = dict(
+            str='...',
+            int=0,
+            float=0.0,
+            bool=False,
+            date=date.today(),
+            time=time.now(),
+            datetime=datetime.now(),
+            cartesianpoint=CartesianPoint((0, 0, 0)),
+            wgs84point=WGS84Point((0, 0, 0))
+    )
+    return defaults[typ]
 
 
 def get_varname(key):

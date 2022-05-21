@@ -1,0 +1,50 @@
+<div metal:use-macro="templates['main'].macros['main']">
+    <div metal:fill-slot="content" >
+        <h4><a href="${get_obj_path(obj)}">${get_display_title(obj)}
+            <span class="uk-text-muted uk-margin-small-left">(${obj.id})</span></a>
+        </h4>
+
+        <h4>Add Property</h4>
+
+        <form method="POST"
+              action="${get_obj_path(obj)}"
+              id="content"
+              class="uk-form uk-form-width-large"
+              hx-target="#content"
+              hx-push-url="false">
+            <span tal:omit-tag="" metal:define-macro="property_core">
+
+                <div class="prop_row">
+                    <label class="uk-text-bold prop_propname" for="prop_name">
+                        Property Name
+                    </label>
+                    <input id="prop_name" name="prop_name" class="uk-input prop_value" type="text" required>
+                </div>
+
+
+                <div class="prop_row">
+                    <label class="uk-text-bold prop_propname" for="prop_type">
+                        Property Type
+                    </label>
+
+                    <select class="uk-select prop_value " name="prop_type" id="prop_type">
+                        <option tal:repeat="(val,desc) conversion.field_types.items()"
+                                value="${val}">${desc}</option>
+                        <option tal:repeat="(val,desc) conversion.field_types.items()"
+                                value="list:${val}">List of ${desc}</option>
+
+                    </select></div>
+
+            </span>
+
+            <div
+                class="uk-margin-top">
+                <input type="submit" value="save"
+                       class="uk-button-small uk-button uk-button-primary">
+                <a href="${get_obj_path(obj)}" class="uk-button uk-button-default uk-button-small">cancel</a>
+            </div>
+
+        </form>
+
+    </div>
+</div>

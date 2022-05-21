@@ -14,22 +14,29 @@
                 <div class="prop_value" id="prop_value_${propname}" tal:define="mode 'view'; path propname">
                     <span metal:use-macro="templates['property'].macros['property_core']"></span>
                 </div>
-
-                <div class="prop_edit">
+                <div class="prop_value uk-width-1-6"></div>
+                <div class="prop_edit uk-margin-left-large" tal:condition="1" >
                     <a  uk-icon="icon: pencil;  ratio: 0.75"
                         class="uk-link-muted "
                         href="${get_obj_path(obj)}/${propname}/edit"
                         hx-target="#prop_value_${propname}"
                         hx-push-url="false"
-
+                        title="Edit property"
                         xhx-ext="debug"></a>
                 </div>
 
                 <div class="prop_delete">
                     <a uk-icon="icon: minus-circle;  ratio: 0.75"
-                       class="uk-link-muted"></a>
+                       href = "${get_obj_path(obj)}/${propname}/delete"
+                       hx-confirm="Delete ${propname}?"
+                       class="uk-link-muted"
+                       title="Delete property"></a>
                 </div>
             </div>
         </div>
+
+    </div>
+    <div id="prop_add" hx-target="this" class="uk-margin-top">
+        <a href="${get_obj_path(obj)}/add" uk-icon="icon: plus-circle" class="uk-link-muted"></a>
     </div>
 </span>

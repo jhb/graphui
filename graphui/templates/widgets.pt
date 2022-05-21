@@ -26,7 +26,7 @@
           class="uk-textarea"
           rows="${value.count('\n')+2}">${value}</textarea>
 
-<span metal:define-macro="duration_edit"
+<div metal:define-macro="duration_edit"
      tal:define="(years,months,days) value.years_months_days;
         (hours,minutes,seconds) value.hours_minutes_seconds;
             fields dict(years=years,months=months,days=days,hours=hours,minutes=minutes,seconds=seconds)"
@@ -38,9 +38,9 @@
                                               value="${v}"></div>
 
         </div>
-    </span>
+    </div>
 
-<span metal:define-macro="wgs84point_edit" class="uk-flex uk-flex-left subproperties">
+<div metal:define-macro="wgs84point_edit" class="uk-flex uk-flex-left subproperties">
         <div class="subproperty">
             <div class="subprop_key">Longitude</div>
             <div class="subprop_value"><input name="${name}.longitude"
@@ -60,9 +60,9 @@
                                               value="${value.height}"></div>
         </div>
 
-    </span>
+    </div>
 
-<span metal:define-macro="cartesianpoint_edit" class="uk-flex uk-flex-left subproperties">
+<div metal:define-macro="cartesianpoint_edit" class="uk-flex uk-flex-left subproperties">
         <div class="subproperty">
             <div class="subprop_key">X</div>
             <div class="subprop_value"><input name="${name}.x" class="uk-input uk-form-width-small"
@@ -79,5 +79,5 @@
                                               type="number" value="${value.z}"></div>
         </div>
 
-    </span>
+    </div>
 

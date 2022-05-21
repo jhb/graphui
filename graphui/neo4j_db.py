@@ -48,7 +48,7 @@ class Graph:
         return self.run('match (n) where id(n)=$id set n=$props return n', id=id, props=props).single()['n']
 
     def get_edge(self, id):
-        return self.run('match (start)-[r]->(target) where id(r)=$id return r', id=id).single()['r']
+        return self.run('match (start)-[r]->(target) where id(r)=$id return start,r,target', id=id).single()['r']
 
     def update_edge(self, id, props):
         return self.run('match ()-[r]->() where id(r)=$id set r=$props return r', id=id, props=props).single()['r']

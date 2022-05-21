@@ -3,10 +3,18 @@ from pprint import pprint
 
 import flask
 from chameleon import PageTemplateLoader
-from flask import Flask, request, g
+from flask import Flask, request, g, redirect
 from neo4j_db import Connection
 import conversion
 import neo4j
+
+class AttrDict(dict):
+
+    def __getattr__(self, item):
+        return self[item]
+# config
+config = AttrDict(debug=0,
+                  hx_boost=1)
 
 connection = Connection("neo4j://localhost:7687", 'neo4j', 'admin')
 app = Flask(__name__, static_url_path="/static")
@@ -14,7 +22,7 @@ app = Flask(__name__, static_url_path="/static")
 
 @app.before_request
 def before():
-    g.graph = connection.graph(debug=1)
+    g.graph = connection.graph(debug=config.debug)
     g.tx = g.graph.tx
 
 @app.teardown_request
@@ -27,10 +35,7 @@ def teardown(exception):
             g.graph.commit(g.tx)
 
 
-class AttrDict(dict):
 
-    def __getattr__(self, item):
-        return self[item]
 
 
 def get_templates():
@@ -57,17 +62,19 @@ def tpl(template_name, **kwargs):
                     conversion=conversion,
                     get_obj_path=get_obj_path,
                     get_obj_type=get_obj_type,
+                    config = config,
                     **kwargs)
 
 def get_display_title(obj, fields=('title', 'name', 'displayName')):
     return next((obj[field] for field in fields if field in obj), obj.id)
 
 def get_obj_type(obj):
-
     return 'node' if type(obj) == neo4j.graph.Node else 'edge'
 
 def get_obj_path(obj):
     return f'/{get_obj_type(obj)}/{obj.id}'
+
+
 
 @app.route('/')
 def get_index():
@@ -98,7 +105,7 @@ def search():
         RETURN distinct x
     """
 
-    print(query.replace('$searchterm', f'"{search_lower}"'))
+    if config.debug: print(query.replace('$searchterm', f'"{search_lower}"'))
     r = g.graph.run(query, searchterm=search_lower)
     out['nodes'] = [row['x'] for row in r]
 
@@ -115,15 +122,16 @@ def search():
 
         """
 
-    print(query.replace('$searchterm', f'"{search_lower}"'))
+    if config.debug: print(query.replace('$searchterm', f'"{search_lower}"'))
     r = g.graph.run(query, searchterm=search_lower)
     out['relationships'] = [row['x'] for row in r]
     return tpl('search', result=out, searchterm=searchterm)
 
 
-@app.route('/node/<int:nodeid>', methods=['GET','POST'])
+@app.route('/node/<int:nodeid>')
+@app.route('/node/<int:nodeid>/')
 def get_node(nodeid):
-    pprint(conversion.parse_form(request.values.items()))
+    if config.debug: pprint(conversion.parse_form(request.values.items()))
     node = g.graph.get_node(nodeid)
     return tpl('node', node=node)
 
@@ -132,15 +140,11 @@ def get_node(nodeid):
 def property_edit(obj_type, obj_or_id, path, mode='view'):
     fetch = getattr(g.graph,f'get_{obj_type}')
     obj = fetch(obj_or_id) if type(obj_or_id) == int else obj_or_id
-
-    # TODO non existent prop
-
-
     prop = obj[path]
     if request.method == 'POST':
         data = conversion.parse_form(request.values.items())[path]
         typ = conversion.guess_type(prop).split(':')[0]
-        print('typ',typ)
+        if config.debug: print('typ',typ)
         if type(prop) != list:
             prop = [prop]
             data = [data]
@@ -157,7 +161,22 @@ def property_edit(obj_type, obj_or_id, path, mode='view'):
         prop = obj[path]
         mode = 'view'
 
-    widget_name = conversion.widgetname(prop, 'edit')
+    elif mode == 'delete':
+        newprops = dict(obj)
+        del(newprops[path])
+        update = getattr(g.graph,f'update_{obj_type}')
+        update(obj.id,newprops)
+        return redirect(f'/{obj_type}/{obj.id}')
+
+    elif mode == 'add':
+        newprops = dict(obj)
+        prop = newprops[path]
+        typ = conversion.guess_type(prop).split(':')[1]
+        prop.append(conversion.get_default(typ))
+        update = getattr(g.graph, f'update_{obj_type}')
+        update(obj.id, newprops)
+        return redirect(f'/{obj_type}/{obj.id}/{path}/edit')
+
     return tpl('property',
                mode = mode,
                obj = obj,
@@ -165,6 +184,45 @@ def property_edit(obj_type, obj_or_id, path, mode='view'):
                path = path,
                obj_type=obj_type,
                name=path), 200, {"HX-Push":"false"}
+
+
+@app.route('/<obj_type>/<int:obj_or_id>/<path>/<int:pos>/delete')
+def property_element_delete(obj_type, obj_or_id, path, pos):
+    fetch = getattr(g.graph, f'get_{obj_type}')
+    obj = fetch(obj_or_id) if type(obj_or_id) == int else obj_or_id
+    newprops = dict(obj)
+    prop = newprops[path]
+    prop.pop(pos)
+    update = getattr(g.graph, f'update_{obj_type}')
+    update(obj.id, newprops)
+    return redirect(f'/{obj_type}/{obj.id}/{path}/edit')
+
+@app.route('/<obj_type>/<int:obj_or_id>/add', methods=['GET'])
+@app.route('/<obj_type>/<int:obj_or_id>', methods=['POST'])
+def add_property(obj_type, obj_or_id):
+    fetch = getattr(g.graph, f'get_{obj_type}')
+    obj = fetch(obj_or_id) if type(obj_or_id) == int else obj_or_id
+    if request.method=="POST":
+
+        prop_type = request.values['prop_type']
+        prop_name = request.values['prop_name'].strip()
+        typ = prop_type.split(':')[-1]
+        value = conversion.get_default(typ)
+        pprint(value)
+        if prop_type.startswith('list:'):
+            value = [value]
+        new_props = dict(obj)
+        new_props[prop_name]=value
+        update = getattr(g.graph, f'update_{obj_type}')
+        pprint(new_props)
+        update(obj.id, new_props)
+        return redirect(f'/{obj_type}/{obj.id}')
+
+    return tpl('property_add',
+               obj=obj,
+               obj_type=obj_type,
+               ), 200, {"HX-Push": "false"}
+
 
 @app.route('/edge/<int:edgeid>')
 def get_edge(edgeid):
