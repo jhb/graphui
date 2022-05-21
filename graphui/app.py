@@ -7,6 +7,7 @@ from flask import Flask, request, g, redirect
 from neo4j_db import Connection
 import conversion
 import neo4j
+import babel.dates as babel_dates
 
 class AttrDict(dict):
 
@@ -63,6 +64,7 @@ def tpl(template_name, **kwargs):
                     get_obj_path=get_obj_path,
                     get_obj_type=get_obj_type,
                     config = config,
+                    babel_dates = babel_dates,
                     **kwargs)
 
 def get_display_title(obj, fields=('title', 'name', 'displayName')):

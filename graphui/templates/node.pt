@@ -9,7 +9,7 @@
         </span>
         <div>&nbsp;</div>
         <div>&nbsp;</div>
-        <div class="uk-grid uk-grid-divider">
+        <div class="uk-grid-divider" uk-grid>
             <div>
                 <h5 class="uk-text-uppercase">Incoming</h5>
                 <ul class="uk-list ">

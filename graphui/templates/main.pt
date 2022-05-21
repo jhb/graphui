@@ -21,7 +21,8 @@
 <body style="padding-left: 2em"
       hx-select="#content"
       hx-target="#content"
-      tal:attributes="hx-boost str(bool(config.hx_boost)).lower()">
+      tal:attributes="hx-boost str(bool(config.hx_boost)).lower()"
+      class="uk-margin-large-left">
 
 <h4 class="uk-margin-top uk-width-expand"><a href="/"><b>GraphUI</b></a>
 <span class="uk-text-muted uk-text-small">@${host}</span>

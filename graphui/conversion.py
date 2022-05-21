@@ -59,7 +59,12 @@ def widgetname(value, mode='view'):
         return widget_map.get(typ, typ) + '_edit'
     else:
         widget_map = dict(str='text',
-                          )
+                          date='date',
+                          time='time',
+                          datetime='datetime',
+                          duration='duration',
+                          wgs84point='wgs84point',
+                          cartesianpoint='cartesianpoint')
         name = widget_map.get(typ, 'str') + '_view'
         # print(name)
         return name

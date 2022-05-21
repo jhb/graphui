@@ -3,11 +3,17 @@
 <input metal:define-macro="str_edit"     name="${name}" class="uk-input" type="text"
                                          value="${value}">
 
+<span metal:define-macro="date_view">${babel_dates.format_date(value.to_native())}</span>
+
 <input metal:define-macro="date_edit"     name="${name}" class="uk-input" type="date"
                                           value="${value}">
 
+<span metal:define-macro="time_view">${babel_dates.format_time(value.to_native())}</span>
+
 <input metal:define-macro="time_edit"     name="${name}" class="uk-input" type="time"
                                           value="${value.hour}:${round(value.minute)}:${round(value.second)}" step="1">
+
+<span metal:define-macro="datetime_view">${babel_dates.format_datetime(value.to_native())}</span>
 
 <input metal:define-macro="datetime_edit" name="${name}" class="uk-input" type="datetime-local"
                                           value="${value.date()}T${value.hour}:${round(value.minute)}:${round(value.second)}"
@@ -26,19 +32,34 @@
           class="uk-textarea"
           rows="${value.count('\n')+2}">${value}</textarea>
 
+<span metal:define-macro="duration_view"
+tal:define="(years,months,days) value.years_months_days;
+    (hours,minutes,seconds) value.hours_minutes_seconds;
+    fields dict(years=years,months=months,days=days,hours=hours,minutes=minutes,seconds=seconds)">
+    <span tal:repeat='(key, value) fields.items()'>
+        <span tal:condition="value">${value} ${key if value>1 else key[:-1]}</span>
+    </span>
+
+</span>
+
 <div metal:define-macro="duration_edit"
      tal:define="(years,months,days) value.years_months_days;
-        (hours,minutes,seconds) value.hours_minutes_seconds;
-            fields dict(years=years,months=months,days=days,hours=hours,minutes=minutes,seconds=seconds)"
+                 (hours,minutes,seconds) value.hours_minutes_seconds;
+                 fields dict(years=years,months=months,days=days,hours=hours,minutes=minutes,seconds=seconds)    "
     class="xuk-flex xuk-flex-left subproperties">
         <div tal:repeat="(skey,v) fields.items()" class="subproperty">
             <div class="subprop_key">${skey.capitalize()}</div>
             <div class="subprop_value"><input name="${name}.${skey}"
                                               class="uk-input uk-form-width-small" type="number"
-                                              value="${v}"></div>
+                                              value="${v}" step="0.1"></div>
 
         </div>
     </div>
+
+<span metal:define-macro="wgs84point_view">longitude: ${value.longitude}<br>
+                                           latitude: ${value.latitude}
+    <span tal:condition="len(value)>2"><br> height: ${value.height}</span>
+</span>
 
 <div metal:define-macro="wgs84point_edit" class="uk-flex uk-flex-left subproperties">
         <div class="subproperty">
@@ -61,6 +82,11 @@
         </div>
 
     </div>
+
+<span metal:define-macro="cartesianpoint_view">x: ${value.x}<br>
+                                          y: ${value.y}
+    <span tal:condition="len(value)>2"><br>z: ${value.z}</span>
+</span>
 
 <div metal:define-macro="cartesianpoint_edit" class="uk-flex uk-flex-left subproperties">
         <div class="subproperty">
