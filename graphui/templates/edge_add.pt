@@ -15,7 +15,7 @@
 
                         <span tal:condition="nodeid=='new'">Create new node<br>&nbsp;</span>
                         <span tal:condition="nodeid!='new'">
-                            ${get_display_title(node)}
+                            <a href="/node/${nodeid}">${get_display_title(node)}</a>
                                 <a href="/nodeselect/${side}/new"
                                    hx-target="#${side}_selection"
                                    hx-select="#${side}_selection"
@@ -35,7 +35,7 @@
                         hx-get="/nodefinder/${side}"
                         hx-target="#${side}_nodes"
                         hx-select="ul"
-                        hx-trigger="keyup changed delay:500ms, search"
+                        hx-trigger="keyup changed delay:300ms, search"
                         autocomplete="off"
                         name="searchterm"
                         placeholder="or search for ${side} node"

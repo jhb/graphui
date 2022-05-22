@@ -200,16 +200,16 @@ def add_property(obj_type, obj_or_id):
 
         prop_type = request.values['prop_type']
         prop_name = request.values['prop_name'].strip()
-        typ = prop_type.split(':')[-1]
-        value = conversion.get_default(typ)
-        pprint(value)
-        if prop_type.startswith('list:'):
-            value = [value]
         new_props = dict(obj)
-        new_props[prop_name] = value
-        update = getattr(g.graph, f'update_{obj_type}')
-        pprint(new_props)
-        update(obj.id, new_props)
+        if prop_name not in new_props:
+            typ = prop_type.split(':')[-1]
+            value = conversion.get_default(typ)
+            pprint(value)
+            if prop_type.startswith('list:'):
+                value = [value]
+            new_props[prop_name] = value
+            update = getattr(g.graph, f'update_{obj_type}')
+            update(obj.id, new_props)
         return redirect(f'/{obj_type}/{obj.id}')
 
     return tpl('property_add',
@@ -285,6 +285,8 @@ def node_finder(side):
 
 @app.route('/nodeselect/<side>/<nodeid>', methods=['GET'])
 def node_select(side, nodeid='new'):
+    if nodeid != 'new':
+        nodeid = int(nodeid)
     node = g.graph.get_node(nodeid) if nodeid!='new' else None
     node_select = tpl('show_macro',
                       show_template_file='edge_add',

@@ -18,8 +18,14 @@
                     <label class="uk-text-bold prop_propname" for="prop_name">
                         Property Name
                     </label>
-                    <input id="prop_name" name="prop_name" class="uk-input prop_value" type="text" required>
+                    <input id="prop_name" name="prop_name" class="uk-input prop_value" type="text" required
+                           list="propnames">
                 </div>
+
+                <datalist id="propnames">
+                    <option tal:repeat="row graph.run('call db.propertyKeys')"
+                        value="${row['propertyKey']}">${row['propertyKey']}</option>
+                </datalist>
 
 
                 <div class="prop_row">
