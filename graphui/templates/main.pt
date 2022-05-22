@@ -23,12 +23,14 @@
       hx-target="#content"
       tal:attributes="hx-boost str(bool(config.hx_boost)).lower()"
       class="uk-margin-large-left">
-
+<div class="uk-align-right">
+    <a href="/node/add">add node</a>&nbsp;
+</div>
 <h4 class="uk-margin-top uk-width-expand"><a href="/"><b>GraphUI</b></a>
 <span class="uk-text-muted uk-text-small">@${host}</span>
 </h4>
 
-<hr width="100%" style="margin-left: 0"/>
+<hr width="100%" style="clear: both; margin-left: 0"/>
 
 <div metal:define-slot="content" id="content">
     main2

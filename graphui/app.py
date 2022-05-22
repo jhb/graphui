@@ -217,6 +217,15 @@ def add_property(obj_type, obj_or_id):
                obj_type=obj_type,
                ), 200, {"HX-Push": "false"}
 
+@app.route('/node/add')
+def node_add():
+    node = g.graph.create_node()
+    return redirect(f'/node/{node.id}')
+
+@app.route('/node/<int:node_id>/delete')
+def node_delete(node_id):
+    node = g.graph.delete_node(node_id)
+    return redirect('/')
 
 @app.route('/edge/<int:edgeid>')
 def get_edge(edgeid):
@@ -224,21 +233,28 @@ def get_edge(edgeid):
     return tpl('edge', edge=edge)
 
 
-@app.route('/edge/add')
+@app.route('/edge/add', methods=['GET','POST'])
 def edge_add():
-    source_id=  request.values.get('source_id',None)
-    source_id = int(source_id) if source_id else 0
+    source_id=  request.values.get('source_id','new')
+    if source_id!='new':
+        source_id = int(source_id)
 
-    target_id = request.values.get('target_id', None)
-    target_id = int(target_id) if target_id else 0
+    target_id = request.values.get('target_id', 'new')
+    if target_id != 'new':
+        target_id = int(target_id)
 
     reltype = request.values.get('reltype','')
 
     if request.method == 'POST':
-        pass
-
-
-
+        if source_id=='new':
+            source = g.graph.create_node()
+            source_id = source.id
+        if target_id=='new':
+            target = g.graph.create_node()
+            target_id = target.id
+        # TODO check that transactions work, this is a good spot for this
+        edge = g.graph.create_edge(source_id, reltype, target_id)
+        return redirect(f'/edge/{edge.id}')
 
     return tpl('edge_add',
                source_id=source_id,
@@ -246,6 +262,10 @@ def edge_add():
                reltype=reltype
                )
 
+@app.route('/edge/<int:edge_id>/delete')
+def edge_delete(edge_id):
+    node = g.graph.delete_edge(edge_id)
+    return redirect('/')
 
 @app.route('/nodefinder/<side>', methods=['GET', 'POST'])
 def node_finder(side):
@@ -263,16 +283,15 @@ def node_finder(side):
                )
 
 
-@app.route('/nodeselect/<side>/<int:nodeid>', methods=['GET'])
-def node_select(side, nodeid=0):
-    node = g.graph.get_node(nodeid) if nodeid else None
+@app.route('/nodeselect/<side>/<nodeid>', methods=['GET'])
+def node_select(side, nodeid='new'):
+    node = g.graph.get_node(nodeid) if nodeid!='new' else None
     node_select = tpl('show_macro',
                       show_template_file='edge_add',
                       show_widget_name='node_selection',
                       nodeid=nodeid,
                       side=side,
                       node=node)
-    oob = f'\n<div id="{side}_nodes" class="uk-margin-top" hx-swap-oob="true"></div>'
 
     return node_select, 200, {"HX-Push": "false"}
 

@@ -4,19 +4,19 @@
     <div metal:fill-slot="content" id="content">
         <h4>Add Edge</h4>
 
-        <form id="edge_add" action="/edge/add" method="GET"></form>
+        <form id="edge_add" action="/edge/add" method="POST"></form>
         <div class="uk-grid uk-grid-small">
-            <div tal:define="side 'source'; nodeid source_id; node graph.get_node(nodeid) if nodeid>0 else None"
+            <div tal:define="side 'source'; nodeid source_id; node graph.get_node(nodeid) if nodeid!='new' else None"
                  class="uk-width-1-3">
                 <label for="start" class="uk-text-bold">From Start</label><br>
                 <div id="${side}_selection"
                      metal:define-macro="node_selection">
                     <div class="uk-margin-small-top">
 
-                        <span tal:condition="not: node|nothing">Create new node<br>&nbsp;</span>
-                        <span tal:condition="node|nothing">
+                        <span tal:condition="nodeid=='new'">Create new node<br>&nbsp;</span>
+                        <span tal:condition="nodeid!='new'">
                             ${get_display_title(node)}
-                                <a href="/nodeselect/${side}/0"
+                                <a href="/nodeselect/${side}/new"
                                    hx-target="#${side}_selection"
                                    hx-select="#${side}_selection"
                                    hx-swap="outerHTML"
@@ -56,6 +56,7 @@
                 list="reltypes"
                 name="reltype"
                 placeholder="relationship type"
+                required=""
                 type="text"
             > ->
                 <br>
@@ -63,7 +64,7 @@
                        class="uk-margin-xlarge-top uk-align-center">
             </div>
 
-            <div tal:define="side 'target'; nodeid target_id; node graph.get_node(nodeid) if nodeid>0 else None"
+            <div tal:define="side 'target'; nodeid target_id; node graph.get_node(nodeid) if nodeid!='new' else None"
                 class="uk-width-1-3">
                 <label for="target" class="uk-text-bold">to Target</label><br>
                 <div metal:use-macro="template.macros['node_selection']"></div>

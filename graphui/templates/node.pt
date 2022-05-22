@@ -1,5 +1,9 @@
 <div metal:use-macro="templates['main'].macros['main']">
     <div metal:fill-slot="content" id="content">
+        <div class="uk-align-right">
+            <a href="/node/${node.id}/delete"
+               hx-confirm="Are you sure you want to delete node ${node.id} '${get_display_title(node)}' and all attached edges?">Delete node</a>
+        </div>
         <h4>${get_display_title(node)}
             <span class="uk-text-muted uk-margin-small-left">(${node.id})</span><br>
             <span class="uk-text-muted">${', '.join(node.labels)} &nbsp;</span>
@@ -20,6 +24,8 @@
                                 &nbsp;-<a href="/edge/${edge.id}">${type(edge).__name__}</a>&rarr;
                         </span>
                     </li>
+                    <br>
+                    <a href="/edge/add?target_id=${node.id}">add incoming edge</a>
                 </ul>
             </div>
             <div>
@@ -40,6 +46,8 @@
                         </span>
                     </li>
                 </ul>
+                <br>
+                <a href="/edge/add?source_id=${node.id}">add outgoing edge</a>
             </div>
 
         </div>

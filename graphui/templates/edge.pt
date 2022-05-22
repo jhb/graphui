@@ -1,5 +1,9 @@
 <div metal:use-macro="templates['main'].macros['main']">
     <div metal:fill-slot="content" id="content">
+        <div class="uk-align-right">
+            <a href="/edge/${edge.id}/delete"
+               hx-confirm="Are you sure you want to delete edge ${edge.id} '${type(edge).__name__}'?">Delete edge</a>
+        </div>
         <h4><a href="/node/${edge.start_node.id}">${get_display_title(edge.start_node)}</a>
                     &nbsp;-${type(edge).__name__}&rarr;&nbsp;
             <a href="/node/${edge.end_node.id}">${get_display_title(edge.end_node)}</a>
