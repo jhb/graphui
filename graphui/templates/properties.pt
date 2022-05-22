@@ -3,7 +3,7 @@
     <div class="properties" hx-push-url="false">
         <div tal:repeat="item sorted(obj.items())" tal:omit-tag="">
             <div tal:define="(propname, prop) item; guessed_type conversion.guess_type(prop); name propname"
-                 class="prop_row">
+                class="prop_row">
                 <div class="prop_propname">
                     <label class="uk-text-bold"
                            for="property-${propname}}">
@@ -11,26 +11,30 @@
                     </label>
                 </div>
 
-                <div class="prop_value" id="prop_value_${propname}" tal:define="mode 'view'; path propname">
+                <div class="prop_value"
+                     id="prop_value_${propname}"
+                     tal:define="mode 'view'; path propname">
                     <span metal:use-macro="templates['property'].macros['property_core']"></span>
                 </div>
                 <div class="prop_value uk-width-1-6"></div>
                 <div class="prop_edit uk-margin-left-large" tal:condition="1" >
-                    <a  uk-icon="icon: pencil;  ratio: 0.75"
-                        class="uk-link-muted "
-                        href="${get_obj_path(obj)}/${propname}/edit"
-                        hx-target="#prop_value_${propname}"
-                        hx-push-url="false"
-                        title="Edit property"
-                        xhx-ext="debug"></a>
+                    <a class="uk-link-muted "
+                       href="${get_obj_path(obj)}/${propname}/edit"
+                       hx-push-url="false"
+                       hx-target="#prop_value_${propname}"
+                       title="Edit property"
+                       uk-icon="icon: pencil;  ratio: 0.75"
+                       xhx-ext="debug"
+                    ></a>
                 </div>
 
                 <div class="prop_delete">
-                    <a uk-icon="icon: minus-circle;  ratio: 0.75"
-                       href = "${get_obj_path(obj)}/${propname}/delete"
+                    <a class="uk-link-muted"
+                       href="${get_obj_path(obj)}/${propname}/delete"
                        hx-confirm="Delete ${propname}?"
-                       class="uk-link-muted"
-                       title="Delete property"></a>
+                       title="Delete property"
+                       uk-icon="icon: minus-circle;  ratio: 0.75"
+                    ></a>
                 </div>
             </div>
         </div>

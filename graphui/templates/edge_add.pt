@@ -1,0 +1,109 @@
+<div metal:use-macro="templates['main'].macros['main']">
+
+
+    <div metal:fill-slot="content" id="content">
+        <h4>Add Edge</h4>
+
+        <form id="edge_add" action="/edge/add" method="GET"></form>
+        <div class="uk-grid uk-grid-small">
+            <div tal:define="side 'source'; nodeid source_id; node graph.get_node(nodeid) if nodeid>0 else None"
+                 class="uk-width-1-3">
+                <label for="start" class="uk-text-bold">From Start</label><br>
+                <div id="${side}_selection"
+                     metal:define-macro="node_selection">
+                    <div class="uk-margin-small-top">
+
+                        <span tal:condition="not: node|nothing">Create new node<br>&nbsp;</span>
+                        <span tal:condition="node|nothing">
+                            ${get_display_title(node)}
+                                <a href="/nodeselect/${side}/0"
+                                   hx-target="#${side}_selection"
+                                   hx-select="#${side}_selection"
+                                   hx-swap="outerHTML"
+                                   hx-push-url="false">X</a>
+                                <br>
+                            <span class="uk-text-muted">${', '.join(node.labels)}</span>
+                            <span class="uk-text-muted">(${node.id})</span>
+                        </span>
+                    </div>
+                    <input type="hidden" id="${side}_id" name="${side}_id" value="${nodeid}"
+                           form="edge_add" required>
+
+
+                    <input
+                        class="uk-margin-small-top"
+                        hx-get="/nodefinder/${side}"
+                        hx-target="#${side}_nodes"
+                        hx-select="ul"
+                        hx-trigger="keyup changed delay:500ms, search"
+                        autocomplete="off"
+                        name="searchterm"
+                        placeholder="or search for ${side} node"
+                        type="text"
+                        style="border: 1px dashed darkgray"
+                    >
+                    <div id="${side}_nodes" class="uk-margin-top"></div>
+                </div>
+            </div>
+
+
+            <div class="uk-width-1-3">
+                <label for="reltype" class="uk-text-bold">&nbsp;&nbsp; of type</label><br>
+                - <input
+                class="uk-margin-small-top"
+                form="edge_add"
+                id="reltype"
+                list="reltypes"
+                name="reltype"
+                placeholder="relationship type"
+                type="text"
+            > ->
+                <br>
+                <input type="submit" form="edge_add" value="Create edge"
+                       class="uk-margin-xlarge-top uk-align-center">
+            </div>
+
+            <div tal:define="side 'target'; nodeid target_id; node graph.get_node(nodeid) if nodeid>0 else None"
+                class="uk-width-1-3">
+                <label for="target" class="uk-text-bold">to Target</label><br>
+                <div metal:use-macro="template.macros['node_selection']"></div>
+
+            </div>
+
+        </div>
+        <datalist id="reltypes">
+            <option tal:repeat="row graph.run('call db.relationshipTypes')"
+                value="${row['relationshipType']}">${row['relationshipType']}</option>
+
+        </datalist>
+
+
+        <div id="node_results">
+
+
+        </div>
+
+
+    </div>
+
+    <div tal:condition="0">
+        <ul metal:define-macro="node_result" class="uk-list">
+            <li tal:repeat='node nodes' class="">
+                <a href="/nodeselect/${side}/${node.id}"
+                   hx-target="#${side}_selection"
+                   hx-select="#${side}_selection"
+                   hx-swap="outerHTML"
+                   hx-push-url="false">${get_display_title(node)}</a>
+                <span class="uk-text-muted">(${node.id})</span>
+                <br>
+                <span class="uk-text-muted">${', '.join(node.labels)}</span>
+
+
+            </li>
+        </ul>
+
+
+    </div>
+
+
+</div>

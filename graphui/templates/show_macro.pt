@@ -1,0 +1,1 @@
+<span metal:use-macro="templates[show_template_file].macros[show_widget_name]"></span>

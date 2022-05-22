@@ -25,7 +25,12 @@
 <input metal:define-macro="bool_edit"     name="${name}" class="uk-checkbox"
                                           type="checkbox" tal:attributes="checked value">
 
-<span metal:define-macro="text_view" tal:content="structure value.replace('\n','<br>')"></span>
+<span metal:define-macro="text_view" >
+
+    <span tal:condition="name != 'markdown'" tal:content="structure value.replace('\n','<br>')"></span>
+    <span tal:condition="name == 'markdown'" hx-boost="false">${structure: markdown.markdown(value)}</span>
+
+</span>
 
 <textarea metal:define-macro="text_edit"
           name="${name}"

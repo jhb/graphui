@@ -68,6 +68,23 @@ class Graph:
         return self.run(statement).graph().relationships
 
 
+    def find_nodes(self,searchterm, limit=1000):
+        search_lower = searchterm.lower()
+        query = f"""
+    
+                MATCH (x) WHERE 
+                    ANY(prop in keys(x) where 
+                        any(word in apoc.convert.toStringList(x[prop]) where toLower(word) contains $searchterm)
+                        or toLower(prop) contains $searchterm
+                        ) or 
+                        id(x) = toInteger($searchterm) or
+                        any(word in labels(x) where toLower(word) = $searchterm)
+                RETURN distinct x limit $limit
+            """
+
+        if self.debug: print(query.replace('$searchterm', f'"{search_lower}"'))
+        r = self.run(query, searchterm=search_lower, limit=limit)
+        return [row['x'] for row in r]
 
 
 class Connection:
