@@ -92,24 +92,8 @@ def search():
     # TODO mix in optional search in _._searchable_text
 
     out['nodes'] = g.graph.find_nodes(searchterm)
+    out['relationships'] = g.graph.find_edges(searchterm)
 
-    query = f"""
-    
-        MATCH ()-[x]->() WHERE 
-            ANY(prop in keys(x) where 
-                any(word in apoc.convert.toStringList(x[prop]) where toLower(word) contains $searchterm)
-                or toLower(prop) contains $searchterm
-                )  or 
-                id(x) =  toInteger($searchterm) or
-                toLower(type(x)) = $searchterm
-        return distinct x
-
-        """
-
-    if config.debug:  # TODO use logging
-        print(query.replace('$searchterm', f'"{search_lower}"'))
-    r = g.graph.run(query, searchterm=search_lower)
-    out['relationships'] = [row['x'] for row in r]
     return tpl('search', result=out, searchterm=searchterm)
 
 
@@ -299,9 +283,7 @@ def node_select(side, node_id='new'):
     return rendered, 200, {"HX-Push": "false"}
 
 
-def get_property_keys():
-    result = g.graph.run('CALL db.propertyKeys()')
-    return [r['propertyKey'] for r in result]
+
 
 @app.route('/labels/<int:node_id>', methods=['GET', 'POST'])
 def labels(node_id):

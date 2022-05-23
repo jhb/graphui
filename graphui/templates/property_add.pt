@@ -23,8 +23,7 @@
                 </div>
 
                 <datalist id="propnames">
-                    <option tal:repeat="row graph.run('call db.propertyKeys')"
-                        value="${row['propertyKey']}">${row['propertyKey']}</option>
+                    <option tal:repeat="pk graph.get_propert_keys()" >${pk}</option>
                 </datalist>
 
 

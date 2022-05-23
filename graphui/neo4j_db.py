@@ -126,12 +126,35 @@ class Graph:
         r = self.run(query, searchterm=search_lower, limit=limit)
         return [row['x'] for row in r]
 
+    def find_edges(self, searchterm, limit=1000):
+        search_lower = searchterm.lower()
+        query = f"""
+
+                MATCH (source)-[x]->(target) WHERE 
+                    ANY(prop in keys(x) where 
+                        any(word in apoc.convert.toStringList(x[prop]) where toLower(word) contains $searchterm)
+                        or toLower(prop) contains $searchterm
+                        )  or 
+                        id(x) =  toInteger($searchterm) or
+                        toLower(type(x)) = $searchterm
+                return distinct source,x,target limit $limit
+
+                """
+        if self.debug:  # TODO use logging
+            print(query.replace('$searchterm', f'"{search_lower}"'))
+
+        r = self.run(query, searchterm=search_lower, limit=limit)
+        return [row['x'] for row in r]
+
     def labels(self):
         return sorted([r['label'] for r in self.run('call db.labels')])
 
     def reltypes(self):
         return sorted([r['relationshipType'] for r in self.run('call db.relationshipTypes')])
 
+    def get_property_keys(self):
+        result = self.run('CALL db.propertyKeys()')
+        return [r['propertyKey'] for r in result]
 
 class Connection:
 

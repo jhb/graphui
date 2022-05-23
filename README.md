@@ -4,6 +4,14 @@
 
 ![Screenshot](graphui.png)
 
+It allows:
+
+- create and delete nodes
+- create and delete edges
+- edit, add and remove properties on nodes and edges
+- edit the labels of nodes
+
+It doesn't require any preparation of your data (but apoc needs to be installed at the moment)
 
 ## Status
 
