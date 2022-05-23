@@ -1,9 +1,9 @@
-import py2neo as py2neo
+from settings import config
+from neo4j_db import Connection
 
-connection = dict(host='localhost', user='neo4j', password='admin')
-graph = py2neo.Graph(**connection)
+connection = Connection(config.neo4j, config.user, config.password)
+graph = connection.graph(debug=config.debug)
 graph.run('match (n) where n.name="propnode" detach delete n')
-
 query = """MERGE (n:PROPNODE {name:'propnode',
                      integer:23,
                      float: 2.3,
@@ -34,5 +34,5 @@ query = """MERGE (n:PROPNODE {name:'propnode',
                      list_pointC3d: [point({x:13.43, y:56.21, z: 2}),point({x:14.43, y:57.21, z: 3})]
                      }) return id(n)"""
 
-print(graph.run(query))
+print(graph.run(query).single())
 

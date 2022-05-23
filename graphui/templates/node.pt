@@ -5,7 +5,7 @@
                hx-confirm="Are you sure you want to delete node ${node.id} '${get_display_title(node)}' and all attached edges?"
                uk-icon="icon: minus-circle;  ratio: 0.75"
                class="uk-link-muted"
-               title="Delete Node"
+               title="Delete Node '${get_display_title(node)}'"
             ></a>
         </div>
         <h4>${get_display_title(node)}

@@ -5,17 +5,17 @@
 
         <form id="edge_add" action="/edge/add" method="POST"></form>
         <div class="uk-grid uk-grid-small">
-            <div tal:define="side 'source'; nodeid source_id;
-                             node graph.get_node(nodeid) if nodeid!='new' else None"
+            <div tal:define="side 'source'; node_id source_id;
+                             node graph.get_node(node_id) if node_id!='new' else None"
                  class="uk-width-1-3">
                 <label for="start" class="uk-text-bold">From Start</label><br>
                 <div id="${side}_selection"
                      metal:define-macro="node_selection">
                     <div class="uk-margin-small-top">
 
-                        <span tal:condition="nodeid=='new'">Create new node<br>&nbsp;</span>
-                        <span tal:condition="nodeid!='new'">
-                            <a href="/node/${nodeid}">${get_display_title(node)}</a>
+                        <span tal:condition="node_id=='new'">Create new node<br>&nbsp;</span>
+                        <span tal:condition="node_id!='new'">
+                            <a href="/node/${node_id}">${get_display_title(node)}</a>
                                 <a href="/nodeselect/${side}/new"
                                    hx-target="#${side}_selection"
                                    hx-select="#${side}_selection"
@@ -29,7 +29,7 @@
                             <span class="uk-text-muted">(${node.id})</span>
                         </span>
                     </div>
-                    <input type="hidden" id="${side}_id" name="${side}_id" value="${nodeid}"
+                    <input type="hidden" id="${side}_id" name="${side}_id" value="${node_id}"
                            form="edge_add" required>
 
 
@@ -67,7 +67,7 @@
                        class="uk-margin-xlarge-top xuk-align-center uk-button uk-button-primary uk-button-small">
             </div>
 
-            <div tal:define="side 'target'; nodeid target_id; node graph.get_node(nodeid) if nodeid!='new' else None"
+            <div tal:define="side 'target'; node_id target_id; node graph.get_node(node_id) if node_id!='new' else None"
                 class="uk-width-1-3">
                 <label for="target" class="uk-text-bold">to Target</label><br>
                 <div metal:use-macro="template.macros['node_selection']"></div>
@@ -76,8 +76,7 @@
 
         </div>
         <datalist id="reltypes">
-            <option tal:repeat="row graph.run('call db.relationshipTypes')"
-                value="${row['relationshipType']}">${row['relationshipType']}</option>
+            <option tal:repeat="rt graph.reltypes()">${rt}</option>
 
         </datalist>
 

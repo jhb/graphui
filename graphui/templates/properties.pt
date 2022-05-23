@@ -34,7 +34,7 @@
                     <a class="uk-link-muted"
                        href="${get_obj_path(obj)}/${propname}/delete"
                        hx-confirm="Delete ${propname}?"
-                       title="Delete property"
+                       title="Delete property '${propname}'"
                        uk-icon="icon: minus-circle;  ratio: 0.75"
                     ></a>
                 </div>

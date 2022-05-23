@@ -67,6 +67,8 @@ class Graph:
 
 
     def create_node(self, props = None):
+        if props is None:
+            props = dict(title='...')
         if props:
             return self.run('create (n) set n=$props return n', props=props).single()['n']
         else:
@@ -125,7 +127,11 @@ class Graph:
         return [row['x'] for row in r]
 
     def labels(self):
-        return [r['label'] for r in self.run('call db.labels')]
+        return sorted([r['label'] for r in self.run('call db.labels')])
+
+    def reltypes(self):
+        return sorted([r['relationshipType'] for r in self.run('call db.relationshipTypes')])
+
 
 class Connection:
 

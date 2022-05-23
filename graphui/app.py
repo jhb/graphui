@@ -9,22 +9,11 @@ import conversion
 import neo4j
 import babel.dates as babel_dates
 import markdown
-from dotenv import load_dotenv, find_dotenv
+from attr_dict import AttrDict
+from settings import config
 
 
-class AttrDict(dict):
-
-    def __getattr__(self, item):
-        return self[item]
-
-
-# config
-load_dotenv(find_dotenv())
-
-config = AttrDict(debug=int(os.environ.get("GRAPHUI_DEBUG", 0)),
-                  hx_boost=int(os.environ.get("GRAPHUI_HX_BOOST", 1)))
-
-connection = Connection("neo4j://localhost:7687", 'neo4j', 'admin')
+connection = Connection(config.neo4j, config.user, config.password)
 app = Flask(__name__, static_url_path="/static")
 
 
