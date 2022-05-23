@@ -2,7 +2,7 @@
 
 *A python/flask based generic neo4j editor*
 
-<img src="graphui.png" alt="GraphUI screenshot" width="600px" style="border: 1px solid black"/>
+![Screenshot](graphui.png)
 
 
 ## Status
