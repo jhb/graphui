@@ -23,7 +23,7 @@
                 </div>
 
                 <datalist id="propnames">
-                    <option tal:repeat="pk graph.get_propert_keys()" >${pk}</option>
+                    <option tal:repeat="pk graph.get_property_keys()" >${pk}</option>
                 </datalist>
 
 

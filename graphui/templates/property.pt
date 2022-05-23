@@ -23,8 +23,7 @@
                      tal:omit-tag="not: is_list and mode=='view'"
                      style="padding-left: 1em">
 
-                    <nobr>
-
+                    <xnobr>
                         <div tal:condition="0 and mode =='view' and is_list"
                             class="uk-align-left uk-margin-remove-right"
                         >🞄&nbsp;&nbsp;
@@ -44,7 +43,7 @@
                                 title="Delete element"
                                 class="uk-link-muted"></a>
                         </div>
-                    </nobr>
+                    </xnobr>
                     <div style="clear: both"></div>
                 </li>
             </ul>
