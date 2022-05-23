@@ -10,4 +10,5 @@ config = AttrDict(debug=int(os.environ.get("GRAPHUI_DEBUG", 0)),
                   neo4j=os.environ.get("GRAPHUI_NEO4J", 'neo4j://localhost:7687'),
                   user=os.environ.get("GRAPHUI_USER", 'neo4j'),
                   password=os.environ.get("GRAPHUI_PASSWORD", 'admin'),
+                  port=os.environ.get("GRAPHUI_PORT", '5003'),
 )

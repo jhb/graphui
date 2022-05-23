@@ -4,3 +4,4 @@ flask
 markdown
 pytest
 babel
+python-dotenv
