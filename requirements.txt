@@ -3,3 +3,4 @@ Chameleon
 flask
 markdown
 pytest
+babel
