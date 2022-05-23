@@ -54,6 +54,10 @@ Just for testing: if the name of a string property ends with '_md', it is render
 
 Other than the missing cleanup mentioned above, the following is though up but not implemented:
 
+- improve search:
+  - get rid of apoc or make it optional
+  - search specific properties only, also just the id
+  - support cypher to search for objects
 - graphical representation of the graph
 - some form of ontology support
 - login screen so that connection details can be provided in the browser
