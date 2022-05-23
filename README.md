@@ -48,6 +48,8 @@ The editor uses the name 'edge' instead of relationship - it's shorter and more 
 
 There is also the script `propnode.py` which creates a node with all available data types of neo4j, useful for testing.
 
+Just for testing: if the name of a string property ends with '_md', it is rendered using markdown, e.g. "text_md".
+
 ## Features to come
 
 Other than the missing cleanup mentioned above, the following is though up but not implemented:
