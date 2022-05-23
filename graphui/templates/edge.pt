@@ -2,7 +2,10 @@
     <div metal:fill-slot="content" id="content">
         <div class="uk-align-right">
             <a href="/edge/${edge.id}/delete"
-               hx-confirm="Are you sure you want to delete edge ${edge.id} '${type(edge).__name__}'?">Delete edge</a>
+               hx-confirm="Are you sure you want to delete edge ${edge.id} '${type(edge).__name__}'?"
+               uk-icon="icon: minus-circle;  ratio: 0.75"
+               class="uk-link-muted"
+               title="Delete edge"></a>
         </div>
         <h4><a href="/node/${edge.start_node.id}">${get_display_title(edge.start_node)}</a>
                     &nbsp;-${type(edge).__name__}&rarr;&nbsp;

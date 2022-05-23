@@ -15,13 +15,13 @@
              tal:define="is_list type(prop) == list and 1 or 0">
 
             <ul tal:define="is_list type(prop) == list and 1 or 0"
-                 tal:omit-tag="not: is_list and mode=='view'"
+                tal:omit-tag="not: is_list and mode=='view'"
                 class="${is_list and 'uk-list uk-list-square uk-margin-remove-left' or ''}"
-                 metal:define-macro="property_core">
-                <li tal:define="values is_list and prop or [prop]"
+                metal:define-macro="property_core">
+                <li tal:define="values prop if is_list else [prop]"
                      tal:repeat="value values"
                      tal:omit-tag="not: is_list and mode=='view'"
-                    style="padding-left: 1em">
+                     style="padding-left: 1em">
 
                     <nobr>
 
@@ -33,7 +33,7 @@
                             class="uk-margin uk-margin-top uk-margin-bottom"
                             style="width: 70%; margin: auto">
                         <span tal:define="widget_name conversion.widgetname(value, mode);
-                            name path+'.'+str(repeat.value.index) if is_list else path"
+                                          name path+'.'+str(repeat.value.index) if is_list else path"
                              metal:use-macro="templates['widgets'].macros[widget_name]"></span>
                         <div tal:condition="is_list and mode=='edit'"
                             class=" uk-margin-left uk-align-right uk-margin-remove-bottom">

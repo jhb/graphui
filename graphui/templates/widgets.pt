@@ -27,8 +27,8 @@
 
 <span metal:define-macro="text_view" >
 
-    <span tal:condition="name != 'markdown'" tal:content="structure value.replace('\n','<br>')"></span>
-    <span tal:condition="name == 'markdown'" hx-boost="false">${structure: markdown.markdown(value)}</span>
+    <span tal:condition="not: name.endswith('_md')" tal:content="structure value.replace('\n','<br>')"></span>
+    <span tal:condition="name.endswith('_md') " hx-boost="false">${structure: markdown.markdown(value)}</span>
 
 </span>
 

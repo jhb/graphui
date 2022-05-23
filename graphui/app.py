@@ -9,6 +9,7 @@ import conversion
 import neo4j
 import babel.dates as babel_dates
 import markdown
+from dotenv import load_dotenv, find_dotenv
 
 
 class AttrDict(dict):
@@ -18,8 +19,10 @@ class AttrDict(dict):
 
 
 # config
-config = AttrDict(debug=0,
-                  hx_boost=1)
+load_dotenv(find_dotenv())
+
+config = AttrDict(debug=int(os.environ.get("GRAPHUI_DEBUG", 0)),
+                  hx_boost=int(os.environ.get("GRAPHUI_HX_BOOST", 1)))
 
 connection = Connection("neo4j://localhost:7687", 'neo4j', 'admin')
 app = Flask(__name__, static_url_path="/static")
@@ -36,7 +39,7 @@ def teardown(exception):
     if hasattr(g, 'graph') and hasattr(g, 'tx'):
         if exception:
             g.graph.rollback(g.tx)
-            del (g.tx)
+            del g.tx
         else:
             g.graph.commit(g.tx)
 
@@ -89,7 +92,7 @@ def get_index():
 
 @app.route('/search')
 def search():
-    # an always working fulltext accross nodes and relations. No indexes used though...
+    # an always working fulltext across nodes and relations. No indexes used though...
     # TODO: have some form of dynamic fulltext field or index
 
     searchterm = request.values.get('searchterm', '').strip()
@@ -114,17 +117,19 @@ def search():
 
         """
 
-    if config.debug: print(query.replace('$searchterm', f'"{search_lower}"'))
+    if config.debug:  # TODO use logging
+        print(query.replace('$searchterm', f'"{search_lower}"'))
     r = g.graph.run(query, searchterm=search_lower)
     out['relationships'] = [row['x'] for row in r]
     return tpl('search', result=out, searchterm=searchterm)
 
 
-@app.route('/node/<int:nodeid>')
-@app.route('/node/<int:nodeid>/')
-def get_node(nodeid):
-    if config.debug: pprint(conversion.parse_form(request.values.items()))
-    node = g.graph.get_node(nodeid)
+@app.route('/node/<int:node_id>')
+@app.route('/node/<int:node_id>/')
+def get_node(node_id):
+    if config.debug:   # TODO use logging
+        pprint(conversion.parse_form(request.values.items()))
+    node = g.graph.get_node(node_id)
     return tpl('node', node=node)
 
 
@@ -135,39 +140,41 @@ def property_edit(obj_type, obj_or_id, path, mode='view'):
     obj = fetch(obj_or_id) if type(obj_or_id) == int else obj_or_id
     prop = obj[path]
     if request.method == 'POST':
-        data = conversion.parse_form(request.values.items())[path]
         typ = conversion.guess_type(prop).split(':')[0]
-        if config.debug: print('typ', typ)
+        data = conversion.parse_form(request.values.items()).get(path, [])  # could be an empty list
+        if config.debug:  # TODO use logging
+            print('typ', typ)
         if type(prop) != list:
             prop = [prop]
             data = [data]
         inner_type = conversion.guess_inner_type(prop)
         converter = conversion.converters[inner_type]
 
-        newprops = dict(obj)
+        # update the obj
+        new_props = dict(obj)
         new = [converter(data[i]) for i, p in enumerate(prop)]
-        newprops[path] = new if typ == 'list' else new[0]
+        new_props[path] = new if typ == 'list' else new[0]
         update = getattr(g.graph, f'update_{obj_type}')
-        update(obj.id, newprops)
+        update(obj.id, new_props)
 
         obj = fetch(obj.id)
         prop = obj[path]
         mode = 'view'
 
     elif mode == 'delete':
-        newprops = dict(obj)
-        del (newprops[path])
+        new_props = dict(obj)
+        del (new_props[path])
         update = getattr(g.graph, f'update_{obj_type}')
-        update(obj.id, newprops)
+        update(obj.id, new_props)
         return redirect(f'/{obj_type}/{obj.id}')
 
     elif mode == 'add':
-        newprops = dict(obj)
-        prop = newprops[path]
+        new_props = dict(obj)
+        prop = new_props[path]
         typ = conversion.guess_type(prop).split(':')[1]
         prop.append(conversion.get_default(typ))
         update = getattr(g.graph, f'update_{obj_type}')
-        update(obj.id, newprops)
+        update(obj.id, new_props)
         return redirect(f'/{obj_type}/{obj.id}/{path}/edit')
 
     return tpl('property',
@@ -183,11 +190,11 @@ def property_edit(obj_type, obj_or_id, path, mode='view'):
 def property_element_delete(obj_type, obj_or_id, path, pos):
     fetch = getattr(g.graph, f'get_{obj_type}')
     obj = fetch(obj_or_id) if type(obj_or_id) == int else obj_or_id
-    newprops = dict(obj)
-    prop = newprops[path]
+    new_props = dict(obj)
+    prop = new_props[path]
     prop.pop(pos)
     update = getattr(g.graph, f'update_{obj_type}')
-    update(obj.id, newprops)
+    update(obj.id, new_props)
     return redirect(f'/{obj_type}/{obj.id}/{path}/edit')
 
 
@@ -217,39 +224,42 @@ def add_property(obj_type, obj_or_id):
                obj_type=obj_type,
                ), 200, {"HX-Push": "false"}
 
+
 @app.route('/node/add')
 def node_add():
     node = g.graph.create_node()
     return redirect(f'/node/{node.id}')
 
+
 @app.route('/node/<int:node_id>/delete')
 def node_delete(node_id):
-    node = g.graph.delete_node(node_id)
+    g.graph.delete_node(node_id)
     return redirect('/')
 
-@app.route('/edge/<int:edgeid>')
-def get_edge(edgeid):
-    edge = g.graph.get_edge(edgeid)
+
+@app.route('/edge/<int:edge_id>')
+def get_edge(edge_id):
+    edge = g.graph.get_edge(edge_id)
     return tpl('edge', edge=edge)
 
 
-@app.route('/edge/add', methods=['GET','POST'])
+@app.route('/edge/add', methods=['GET', 'POST'])
 def edge_add():
-    source_id=  request.values.get('source_id','new')
-    if source_id!='new':
+    source_id = request.values.get('source_id', 'new')
+    if source_id != 'new':
         source_id = int(source_id)
 
     target_id = request.values.get('target_id', 'new')
     if target_id != 'new':
         target_id = int(target_id)
 
-    reltype = request.values.get('reltype','')
+    reltype = request.values.get('reltype', '')
 
     if request.method == 'POST':
-        if source_id=='new':
+        if source_id == 'new':
             source = g.graph.create_node()
             source_id = source.id
-        if target_id=='new':
+        if target_id == 'new':
             target = g.graph.create_node()
             target_id = target.id
         # TODO check that transactions work, this is a good spot for this
@@ -262,10 +272,12 @@ def edge_add():
                reltype=reltype
                )
 
+
 @app.route('/edge/<int:edge_id>/delete')
 def edge_delete(edge_id):
-    node = g.graph.delete_edge(edge_id)
+    g.graph.delete_edge(edge_id)
     return redirect('/')
+
 
 @app.route('/nodefinder/<side>', methods=['GET', 'POST'])
 def node_finder(side):
@@ -283,25 +295,47 @@ def node_finder(side):
                )
 
 
-@app.route('/nodeselect/<side>/<nodeid>', methods=['GET'])
-def node_select(side, nodeid='new'):
-    if nodeid != 'new':
-        nodeid = int(nodeid)
-    node = g.graph.get_node(nodeid) if nodeid!='new' else None
-    node_select = tpl('show_macro',
-                      show_template_file='edge_add',
-                      show_widget_name='node_selection',
-                      nodeid=nodeid,
-                      side=side,
-                      node=node)
+@app.route('/nodeselect/<side>/<node_id>', methods=['GET'])
+def node_select(side, node_id='new'):
+    if node_id != 'new':
+        node_id = int(node_id)
+    node = g.graph.get_node(node_id) if node_id != 'new' else None
+    rendered = tpl('show_macro',
+                   show_template_file='edge_add',
+                   show_widget_name='node_selection',
+                   node_id=node_id,
+                   side=side,
+                   node=node)
 
-    return node_select, 200, {"HX-Push": "false"}
+    return rendered, 200, {"HX-Push": "false"}
 
 
 def get_property_keys():
     result = g.graph.run('CALL db.propertyKeys()')
     return [r['propertyKey'] for r in result]
 
+@app.route('/labels/<int:node_id>', methods=['GET', 'POST'])
+def labels(node_id):
+    node = g.graph.get_node(node_id)
+    mode = 'edit'
+
+    if request.method == "POST":
+        new_labels = sorted({l.strip() for l in request.values.getlist('labels')})
+        if add_label := request.values.get('add_label', '').strip():
+            new_labels.append(add_label)
+        node = g.graph.set_labels(node_id, new_labels)
+        mode = 'view'
+
+    return tpl('labels', node=node, mode=mode), 200, {"HX-Push": "false"}
+
+
+@app.route('/labels/<int:node_id>/<label>/delete')
+def label_delete(node_id,label):
+    label = label.strip()
+    node = g.graph.get_node(node_id)
+    new_labels = sorted([l for l in node.labels if l!=label])
+    node = g.graph.set_labels(node_id, new_labels)
+    return tpl('labels', node=node, mode='edit'), 200, {"HX-Push": "false"}
 
 @app.route('/favicon.ico')
 def favicon():

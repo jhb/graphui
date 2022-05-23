@@ -9,14 +9,14 @@
         <form method="POST"
               action="${get_obj_path(obj)}"
               id="content"
-              class="uk-form uk-form-width-large"
+              class="uk-form uk-form-width-large uk-margin-small-top"
               hx-target="#content"
               hx-push-url="false">
             <span tal:omit-tag="" metal:define-macro="property_core">
 
                 <div class="prop_row">
-                    <label class="uk-text-bold prop_propname" for="prop_name">
-                        Property Name
+                    <label class="xuk-text-bold prop_propname" for="prop_name">
+                        New Name
                     </label>
                     <input id="prop_name" name="prop_name" class="uk-input prop_value" type="text" required
                            list="propnames">
@@ -29,7 +29,7 @@
 
 
                 <div class="prop_row">
-                    <label class="uk-text-bold prop_propname" for="prop_type">
+                    <label class="xuk-text-bold prop_propname" for="prop_type">
                         Property Type
                     </label>
 

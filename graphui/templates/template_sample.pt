@@ -1,0 +1,5 @@
+<div metal:use-macro="templates['main'].macros['main']">${''}
+    <div metal:fill-slot="content" >
+
+    </div>
+</div>

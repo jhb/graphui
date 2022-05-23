@@ -1,0 +1,63 @@
+<div metal:use-macro="templates['main'].macros['main']">${''}
+    <div metal:fill-slot="content">
+        <h4><a href="${get_obj_path(node)}">${get_display_title(node)}
+            <span class="uk-text-muted uk-margin-small-left">(${node.id})</span></a>
+        </h4>
+
+        <h5>Labels</h5>
+        <div tal:condition="mode!='edit'"
+             metal:use-macro="templates['node'].macros['labels']">
+        </div>
+
+        <div tal:condition="mode=='edit'">
+            <form action="/labels/${node.id}"
+                  class="uk-form uk-form-width-large uk-text-default uk-margin-small-top"
+                  method="POST"
+                  id="content"
+                  hx-target="#labels"
+                  hx-select="#labels">
+
+                <ul class="uk-list some_table">
+                    <li tal:repeat="label sorted(node.labels)" class="some_row">
+                        <input type="text"
+                               name="labels"
+                               value="${label}"
+                               class="uk-input some_cell uk-form-width-medium"
+                               list="label_list"
+                               autocomplete="off">
+                        <div class="some_cell">
+                            <a href="/labels/${node.id}/${label}/delete"
+                               uk-icon="icon: minus-circle;  ratio: 0.75"
+                               class="uk-link-muted uk-margin-small-left"
+                               title="Remove label '${label}'"
+                               hx-target="#labels"
+                               hx-select="#content"></a>&nbsp;
+                        </div>
+                    </li>
+                </ul>
+
+                <div>
+                    <label>Add label</label><br>
+                    <input type="text"
+                           id="add_label"
+                           name="add_label"
+                           class="uk-input uk-form-width-medium"
+                           list="label_list"
+                           autocomplete="off"
+                    >
+                </div>
+
+                <div>
+                    <input type="submit" value="save"
+                           class="uk-button uk-button-primary uk-button-small uk-margin-top">
+                </div>
+
+                <datalist id="label_list">
+                    <option tal:repeat="label graph.labels()">${label}</option>
+                </datalist>
+            </form>
+
+
+        </div>
+    </div>
+</div>

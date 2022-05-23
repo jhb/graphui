@@ -22,9 +22,12 @@
       hx-select="#content"
       hx-target="#content"
       tal:attributes="hx-boost str(bool(config.hx_boost)).lower()"
-      class="uk-margin-large-left">
+      class="uk-margin-left uk-margin-right">
 <div class="uk-align-right">
-    <a href="/node/add">add node</a>&nbsp;
+    <a href="/node/add"
+       uk-icon="icon: plus-circle;  ratio: 0.75"
+       class="uk-link-muted"
+       title="Add Node"></a>&nbsp;
 </div>
 <h4 class="uk-margin-top uk-width-expand"><a href="/"><b>GraphUI</b></a>
 <span class="uk-text-muted uk-text-small">@${host}</span>

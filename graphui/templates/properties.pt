@@ -1,9 +1,11 @@
-<span tal:omit-tag="" metal:define-macro="properties">
+<span tal:omit-tag="" metal:define-macro="properties">${''}
     <h5>Properties</h5>
     <div class="properties" hx-push-url="false">
         <div tal:repeat="item sorted(obj.items())" tal:omit-tag="">
-            <div tal:define="(propname, prop) item; guessed_type conversion.guess_type(prop); name propname"
-                class="prop_row">
+            <div tal:define="(propname, prop) item;
+                             guessed_type conversion.guess_type(prop);
+                             name propname"
+                 class="prop_row">
                 <div class="prop_propname">
                     <label class="uk-text-bold"
                            for="property-${propname}}">
@@ -40,7 +42,10 @@
         </div>
 
     </div>
-    <div id="prop_add" hx-target="this" class="uk-margin-top">
-        <a href="${get_obj_path(obj)}/add" uk-icon="icon: plus-circle" class="uk-link-muted"></a>
+    <div id="prop_add" hx-target="this" class="xuk-margin-small-top">
+        <a href="${get_obj_path(obj)}/add"
+           uk-icon="icon: plus-circle;  ratio: 0.75"
+           class="uk-link-muted"
+           title="Add property"></a>
     </div>
 </span>

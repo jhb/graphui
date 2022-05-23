@@ -2,11 +2,26 @@
     <div metal:fill-slot="content" id="content">
         <div class="uk-align-right">
             <a href="/node/${node.id}/delete"
-               hx-confirm="Are you sure you want to delete node ${node.id} '${get_display_title(node)}' and all attached edges?">Delete node</a>
+               hx-confirm="Are you sure you want to delete node ${node.id} '${get_display_title(node)}' and all attached edges?"
+               uk-icon="icon: minus-circle;  ratio: 0.75"
+               class="uk-link-muted"
+               title="Delete Node"
+            ></a>
         </div>
         <h4>${get_display_title(node)}
             <span class="uk-text-muted uk-margin-small-left">(${node.id})</span><br>
-            <span class="uk-text-muted">${', '.join(node.labels)} &nbsp;</span>
+            <div class="uk-text-muted"
+                 metal:define-macro="labels"
+                 id="labels">${', '.join(sorted(node.labels))} &nbsp;
+            <a class="uk-link-muted uk-margin-left "
+               href="/labels/${node.id}"
+               hx-target="#labels"
+               hx-push-url="false"
+               title="Edit labels"
+               uk-icon="icon: pencil;  ratio: 0.75"
+                    ></a>
+
+            </div>
         </h4>
 
         <span tal:define="obj node" metal:use-macro="templates['properties'].macros['properties']">
@@ -15,7 +30,13 @@
         <div>&nbsp;</div>
         <div class="uk-grid-divider" uk-grid>
             <div>
-                <h5 class="uk-text-uppercase">Incoming</h5>
+                <h5 class="uk-text-uppercase">
+                    Incoming
+                    <a href="/edge/add?target_id=${node.id}"
+                       uk-icon="icon: plus-circle;  ratio: 0.75"
+                       class="uk-margin-left uk-link-muted"
+                       title="Add incoming edge"></a>
+                </h5>
                 <ul class="uk-list ">
                     <li tal:repeat="edge sorted(graph.edges(None,node.id),
                         key=lambda e: type(e).__name__)">
@@ -24,8 +45,6 @@
                                 &nbsp;-<a href="/edge/${edge.id}">${type(edge).__name__}</a>&rarr;
                         </span>
                     </li>
-                    <br>
-                    <a href="/edge/add?target_id=${node.id}">add incoming edge</a>
                 </ul>
             </div>
             <div>
@@ -35,7 +54,14 @@
                     </div>
                 </div>
             </div>
-            <div><h5 class="uk-text-uppercase">Outgoing</h5>
+            <div>
+                <h5 class="uk-text-uppercase">
+                    Outgoing
+                    <a href="/edge/add?source_id=${node.id}"
+                       uk-icon="icon: plus-circle;  ratio: 0.75"
+                       class="uk-margin-left uk-link-muted"
+                       title="Add outgoing edge"></a>
+                </h5>
                 <ul class="uk-list ">
                     <li tal:repeat="edge sorted(graph.edges(node.id,None),
                         key=lambda e: type(e).__name__)">
@@ -46,8 +72,6 @@
                         </span>
                     </li>
                 </ul>
-                <br>
-                <a href="/edge/add?source_id=${node.id}">add outgoing edge</a>
             </div>
 
         </div>

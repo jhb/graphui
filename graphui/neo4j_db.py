@@ -47,6 +47,25 @@ class Graph:
     def update_node(self, id, props):
         return self.run('match (n) where id(n)=$id set n=$props return n', id=id, props=props).single()['n']
 
+    def set_labels(self, node_id, labels=None):
+        labels = labels if labels is not None else []
+
+        node = self.get_node(node_id)
+        add_labels = ':'.join(list(set(labels) - node.labels))
+        remove_labels = ':'.join(list(node.labels - set(labels)))
+
+        remove_string = f'remove n:{remove_labels}' if remove_labels else ''
+        add_string = f'set n:{add_labels}' if add_labels else ''
+
+        result = self.run(f"""match (n) where id(n)=$node_id
+                              {remove_string}
+                              {add_string} 
+                              return n""",
+                          node_id=node_id)
+        return result.single()['n']
+
+
+
     def create_node(self, props = None):
         if props:
             return self.run('create (n) set n=$props return n', props=props).single()['n']
@@ -105,6 +124,8 @@ class Graph:
         r = self.run(query, searchterm=search_lower, limit=limit)
         return [row['x'] for row in r]
 
+    def labels(self):
+        return [r['label'] for r in self.run('call db.labels')]
 
 class Connection:
 
@@ -114,7 +135,7 @@ class Connection:
 
     def graph(self, debug=False, **config) -> Graph:
         session = self.driver.session(**config)
-        return Graph(session,debug=debug)
+        return Graph(session, debug=debug)
 
 
 if __name__ == '__main__':

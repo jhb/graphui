@@ -4,16 +4,17 @@
 }
 
 @media (min-width: 40em) {
-    .properties, .subproperties {
+    .properties, .subproperties, .some_table {
         display: table
     }
 
-    .property, .subproperty, .prop_row {
+    .property, .subproperty, .prop_row, .some_row {
         display: table-row
     }
 
     .prop_key, .prop_value, .prop_type, .prop_edit, .prop_delete,
-    .subprop_key, .subprop_value, .subprop_type, .subprop_edit, .subprop_delete {
+    .subprop_key, .subprop_value, .subprop_type, .subprop_edit, .subprop_delete,
+    .some_cell {
         display: table-cell;
         padding: 0.5em 0.5em;
     }
