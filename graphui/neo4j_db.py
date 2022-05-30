@@ -14,8 +14,12 @@ class Graph:
         if self.debug:
             print(statement, kwargs)
         if self._tx:
+            if self.debug:
+                print('tx')
             result = self._tx.run(statement, **kwargs)
         else:
+            if self.debug:
+                print('session')
             result =  self._session.run(statement, **kwargs)
 
         return result
@@ -41,6 +45,14 @@ class Graph:
         self._tx = None
 
 
+    def create_node(self, props = None):
+        if props is None:
+            props = dict(title='...')
+        if props:
+            return self.run('create (n) set n=$props return n', props=props).single()['n']
+        else:
+            return self.run('create (n) return n').single()['n']
+
     def get_node(self, id):
         return self.run('match (n) where id(n)=$id return n', id=id).single()['n']
 
@@ -64,24 +76,8 @@ class Graph:
                           node_id=node_id)
         return result.single()['n']
 
-
-
-    def create_node(self, props = None):
-        if props is None:
-            props = dict(title='...')
-        if props:
-            return self.run('create (n) set n=$props return n', props=props).single()['n']
-        else:
-            return self.run('create (n) return n').single()['n']
-
     def delete_node(self, node_id):
         self.run('match (n) where id(n)=$node_id detach delete n', node_id=node_id)
-
-    def get_edge(self, id):
-        return self.run('match (start)-[r]->(target) where id(r)=$id return start,r,target', id=id).single()['r']
-
-    def update_edge(self, id, props):
-        return self.run('match ()-[r]->() where id(r)=$id set r=$props return r', id=id, props=props).single()['r']
 
     def create_edge(self, source_id, reltype, target_id):
         return self.run(f"""match (source) where id(source)=$source_id
@@ -89,6 +85,12 @@ class Graph:
                            create (source)-[r:{reltype}]->(target)
                            return r
                            """,source_id=source_id, reltype=reltype, target_id=target_id).single()['r']
+
+    def get_edge(self, id):
+        return self.run('match (start)-[r]->(target) where id(r)=$id return start,r,target', id=id).single()['r']
+
+    def update_edge(self, id, props):
+        return self.run('match ()-[r]->() where id(r)=$id set r=$props return r', id=id, props=props).single()['r']
 
     def delete_edge(self, edge_id):
         self.run('match ()-[r]->() where id(r)=$edge_id delete r', edge_id=edge_id)
@@ -122,7 +124,8 @@ class Graph:
                 RETURN distinct x limit $limit
             """
 
-        if self.debug: print(query.replace('$searchterm', f'"{search_lower}"'))
+        # if self.debug:
+        #     print(query.replace('$searchterm', f'"{search_lower}"'))
         r = self.run(query, searchterm=search_lower, limit=limit)
         return [row['x'] for row in r]
 
@@ -140,8 +143,8 @@ class Graph:
                 return distinct source,x,target limit $limit
 
                 """
-        if self.debug:  # TODO use logging
-            print(query.replace('$searchterm', f'"{search_lower}"'))
+        # if self.debug:  # TODO use logging
+        #     print(query.replace('$searchterm', f'"{search_lower}"'))
 
         r = self.run(query, searchterm=search_lower, limit=limit)
         return [row['x'] for row in r]
@@ -178,7 +181,7 @@ if __name__ == '__main__':
 
     # n2 = g.update_node(n.id,dict(n))
     # print(n2)
-    r = list(g.relationships(71))
+    r = g.get_edge(71)
     print(r)
     tx.rollback()
 

@@ -7,11 +7,11 @@
             <form action="/search">
 
                 <input type="search" name="searchterm" value="${searchterm|nothing}"
-                       placeholder="Volltextsuche"
+                       placeholder="Full-text search"
                        class="uk-form-large uk-input uk-width-large"
                        style="border: 1px solid grey"/>
                 <div>&nbsp;</div>
-                <button class="uk-button uk-button-default" name="qtype" value="fulltext">Fulltext
+                <button class="uk-button uk-button-default" name="qtype" value="fulltext">search
                 </button>
 <!--?                <button class="uk-button uk-button-default" name="qtype" value="query">Query-->
 <!--?                </button>-->
