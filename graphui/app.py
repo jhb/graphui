@@ -14,7 +14,7 @@ from settings import config
 
 
 connection = Connection(config.neo4j, config.user, config.password)
-app = Flask(__name__, static_url_path="/static", static_folder='static_tmp')
+app = Flask(__name__, static_url_path="/static", static_folder='static')
 
 
 @app.before_request
