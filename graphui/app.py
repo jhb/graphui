@@ -14,7 +14,7 @@ from settings import config
 
 
 connection = Connection(config.neo4j, config.user, config.password)
-app = Flask(__name__, static_url_path="/static")
+app = Flask(__name__, static_url_path="/static", static_folder='static_tmp')
 
 
 @app.before_request
@@ -59,6 +59,7 @@ def tpl(template_name, **kwargs):
                     config=config,
                     babel_dates=babel_dates,
                     markdown=markdown,
+                    url_for = flask.url_for,
                     **kwargs)
 
 
@@ -310,7 +311,7 @@ def label_delete(node_id,label):
 
 @app.route('/favicon.ico')
 def favicon():
-    return ''
+    return redirect(flask.url_for('static', filename='favicon.ico'))
 
 
 @app.route('/jhb')

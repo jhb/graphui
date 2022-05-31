@@ -7,16 +7,17 @@
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>GraphUI ${template_name}</title>
-    <script src="/static/htmx.js"></script>
-    <script src="/static/debug.js"></script>
+    <script src="${url_for('static', filename='htmx.js')}"></script>
+    <script src="${url_for('static', filename='debug.js')}"></script>
 
-    <link rel="stylesheet" href="/static/uikit/css/uikit.css"/>
-    <script src="/static/uikit/js/uikit.min.js"></script>
-    <script src="/static/uikit/js/uikit-icons.min.js"></script>
-    <script src="/static/jquery-3.6.0.min.js"></script>
+    <link rel="stylesheet" href="${url_for('static', filename='uikit/css/uikit.css')}"/>
+    <script src="${url_for('static', filename='uikit/js/uikit.min.js')}"></script>
+    <script src="${url_for('static', filename='uikit/js/uikit-icons.min.js')}"></script>
+    <script src="${url_for('static', filename='jquery-3.6.0.min.js')}"></script>
     <script src='/static/panzoom.min.js'></script>
-    <link rel="stylesheet" href="/static/fontawesome/css/all.css">
-    <link rel="stylesheet" href="/static/graphui.css"/>
+    <link rel="stylesheet" href="${url_for('static', filename='fontawesome/css/all.css')}">
+    <link rel="stylesheet" href="${url_for('static', filename='graphui.css')}"/>
+    <link rel="shortcut icon" href="${url_for('static', filename='favicon.ico') }">
 </head>
 <body style="padding-left: 2em"
       hx-select="#content"
