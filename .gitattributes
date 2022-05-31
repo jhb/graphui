@@ -1,2 +1,4 @@
 graphui/static/* linguist-vendored
 graphui/static/graphui.css linguist-vendored=false
+graphui/static_tmp/* linguist-vendored
+graphui/static_tmp/graphui.css linguist-vendored=false
