@@ -1,17 +1,17 @@
 import os
 from pprint import pprint
 
-import flask
-from chameleon import PageTemplateLoader
-from flask import Flask, request, g, redirect
-from neo4j_db import Connection
-import conversion
-import neo4j
 import babel.dates as babel_dates
+import flask
 import markdown
-from attr_dict import AttrDict
-from settings import config
+import neo4j
+from chameleon_fetcher import ChameleonFetcher
+from flask import Flask, request, g, redirect
 
+import conversion
+from attr_dict import AttrDict
+from neo4j_db import Connection
+from settings import config
 
 connection = Connection(config.neo4j, config.user, config.password)
 app = Flask(__name__, static_url_path="/static", static_folder='static')
@@ -33,34 +33,24 @@ def teardown(exception):
             g.graph.commit(g.tx)
 
 
-def get_templates():
-    return PageTemplateLoader(os.path.join(os.path.dirname(__file__), 'templates'), '.pt',
-                              boolean_attributes={"selected", "checked"},
-                              auto_reload=True)
-
-
-templates = get_templates()
-
+fetcher = ChameleonFetcher(os.path.join(os.path.dirname(__file__), 'templates'))
 
 def tpl(template_name, **kwargs):
-    # this is not the best place because of performance
-    template = templates[template_name]
-    return template(templates=templates,
-                    template_name=template_name,
-                    app=app,
-                    flask=flask,
-                    g=g,
-                    graph=g.graph,
-                    get_display_title=get_display_title,
-                    host=connection.uri,
-                    conversion=conversion,
-                    get_obj_path=get_obj_path,
-                    get_obj_type=get_obj_type,
-                    config=config,
-                    babel_dates=babel_dates,
-                    markdown=markdown,
-                    url_for = flask.url_for,
-                    **kwargs)
+    return fetcher(template_name,
+                   app=app,
+                   flask=flask,
+                   g=g,
+                   graph=g.graph,
+                   get_display_title=get_display_title,
+                   host=connection.uri,
+                   conversion=conversion,
+                   get_obj_path=get_obj_path,
+                   get_obj_type=get_obj_type,
+                   config=config,
+                   babel_dates=babel_dates,
+                   markdown=markdown,
+                   url_for=flask.url_for,
+                   **kwargs)
 
 
 def get_display_title(obj, fields=('title', 'name', 'displayName')):
@@ -101,7 +91,7 @@ def search():
 @app.route('/node/<int:node_id>')
 @app.route('/node/<int:node_id>/')
 def get_node(node_id):
-    if config.debug:   # TODO use logging
+    if config.debug:  # TODO use logging
         pprint(conversion.parse_form(request.values.items()))
     node = g.graph.get_node(node_id)
     return tpl('node', node=node)
@@ -284,8 +274,6 @@ def node_select(side, node_id='new'):
     return rendered, 200, {"HX-Push": "false"}
 
 
-
-
 @app.route('/labels/<int:node_id>', methods=['GET', 'POST'])
 def labels(node_id):
     node = g.graph.get_node(node_id)
@@ -302,12 +290,13 @@ def labels(node_id):
 
 
 @app.route('/labels/<int:node_id>/<label>/delete')
-def label_delete(node_id,label):
+def label_delete(node_id, label):
     label = label.strip()
     node = g.graph.get_node(node_id)
-    new_labels = sorted([l for l in node.labels if l!=label])
+    new_labels = sorted([l for l in node.labels if l != label])
     node = g.graph.set_labels(node_id, new_labels)
     return tpl('labels', node=node, mode='edit'), 200, {"HX-Push": "false"}
+
 
 @app.route('/favicon.ico')
 def favicon():

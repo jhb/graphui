@@ -1,7 +1,10 @@
 <span metal:define-macro="str_view">${value}</span>
 
-<input metal:define-macro="str_edit"     name="${name}" class="uk-input" type="text"
-                                         value="${value}">
+<input metal:define-macro="str_edit"
+    name="${name}"
+    class="uk-input"
+    type="text"
+    value="${value}">
 
 <span metal:define-macro="date_view">${babel_dates.format_date(value.to_native())}</span>
 
