@@ -5,10 +5,10 @@
             <div tal:define="(propname, prop) item;
                              guessed_type conversion.guess_type(prop);
                              name propname"
-                 class="prop_row">
+                 class="prop_row prop_row_${propname}">
                 <div class="prop_propname">
                     <label class="uk-text-bold"
-                           for="property-${propname}}">
+                           for="prop_value_${propname}">
                         ${propname}
                     </label>
                 </div>
