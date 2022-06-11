@@ -19,7 +19,7 @@
                         New Name
                     </label>
                     <input id="prop_name" name="prop_name" class="uk-input prop_value" type="text" required
-                           list="propnames">
+                           list="propnames" autocomplete="off">
                 </div>
 
                 <datalist id="propnames">

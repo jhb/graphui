@@ -54,7 +54,7 @@ def tpl(template_name, **kwargs):
 
 
 def get_display_title(obj, fields=('title', 'name', 'displayName')):
-    return next((obj[field] for field in fields if field in obj), obj.id)
+    return next((str(obj[field]) for field in fields if field in obj), str(obj.id))
 
 
 def get_obj_type(obj):

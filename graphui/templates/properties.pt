@@ -26,7 +26,6 @@
                        hx-target="#prop_value_${propname}"
                        title="Edit property"
                        uk-icon="icon: pencil;  ratio: 0.75"
-                       xhx-ext="debug"
                     ></a>
                 </div>
 
