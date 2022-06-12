@@ -3,9 +3,9 @@
     <div class="properties" hx-push-url="false">
         <div tal:repeat="item sorted(obj.items())" tal:omit-tag="">
             <div tal:define="(propname, prop) item;
-                             guessed_type conversion.guess_type(prop);
-                             name propname"
-                 class="prop_row prop_row_${propname}">
+                guessed_type conversion.guess_type(prop);
+                    name propname"
+                class="prop_row prop_row_${propname}">
                 <div class="prop_propname">
                     <label class="uk-text-bold"
                            for="prop_value_${propname}">
@@ -48,5 +48,35 @@
            uk-icon="icon: plus-circle;  ratio: 0.75"
            class="uk-link-muted"
            title="Add property"></a>
+    </div>
+    <div>
+
+
+
+        <form action="${get_obj_path(obj)}/schema"
+              class="uk-form uk-form-width-large xuk-form-small uk-margin-medium-top uk-margin-medium-bottom"
+              method="POST">
+            <div class="uk-margin-bottom">Has schemata: ${', '.join([s['title'] for s in graph.get_schemata() if has_schema(obj,s)])}</div>
+
+            <select name="schema_id" class="uk-select uk-form-small uk-form-width-medium uk-display-inline" id="schema_id" required>
+                <option value="" class="uk-text-muted">- add schema props -</option>
+                <span tal:omit-tag="" tal:repeat="schema graph.get_schemata()">
+                    <option
+                        value="${schema.id}"
+                         tal:condition="not has_schema(obj, schema)"
+
+                    >${schema['title']}:
+                     ${', '.join([p for p in schema['schema_properties'] if p not in obj])}</option>
+
+                </span>
+            </select>
+
+            <input type="submit"
+                   class="uk-button uk-button-default uk-form-small uk-button-small  uk-margin-left"
+                   value="Add">
+
+
+        </form>
+
     </div>
 </span>

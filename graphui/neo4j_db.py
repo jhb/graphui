@@ -159,6 +159,17 @@ class Graph:
         result = self.run('CALL db.propertyKeys()')
         return [r['propertyKey'] for r in result]
 
+    def get_schemata(self):
+        result = self.run("match (n) where n.title='GraphUI Schema' return n")
+        if not result:
+            return []
+        schema_node=result.single()['n']
+        where = ' and '.join(f'n.{p} is not NULL' for p in schema_node['schema_properties'])
+        result2 = self.run(f"match (n) where {where} return distinct n order by n.title")
+        schemata = [row['n'] for row in result2]
+        return schemata
+
+
 class Connection:
 
     def __init__(self, uri, username, password):

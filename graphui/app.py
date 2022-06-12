@@ -63,6 +63,7 @@ def tpl(template_name, **kwargs):
                    babel_dates=babel_dates,
                    markdown=markdown,
                    url_for=flask.url_for,
+                   has_schema=has_schema,
                    **kwargs)
 
 
@@ -320,6 +321,31 @@ def label_delete(node_id, label):
     node = g.graph.set_labels(node_id, new_labels)
     return tpl_no_push('labels', node=node, mode='edit')
 
+def has_schema(obj, schema):
+    print(obj.id, schema['title'])
+    print(list(k for k in schema['schema_properties']))
+    out = all(k in obj for k in schema['schema_properties'])
+    print(out)
+    return out
+
+@app.post('/<obj_type>/<int:obj_or_id>/schema')
+def schema_add(obj_type, obj_or_id):
+    obj = fetch_obj(obj_type, obj_or_id)
+    schema_id = int(request.values['schema_id'])
+    schema_node = g.graph.get_node(schema_id)
+    new_props = dict(obj)
+    for prop_name in schema_node['schema_properties']:
+        if prop_name == 'schema_properties':
+            value = ['']
+        else:
+            value = ''
+        if prop_name not in new_props:
+            new_props[prop_name]=value
+    update = getattr(g.graph, f'update_{obj_type}')
+    update(obj.id, new_props)
+    return redirect(f'/{obj_type}/{obj.id}')
+
+
 
 @app.route('/favicon.ico')
 def favicon():
@@ -328,9 +354,7 @@ def favicon():
 
 @app.route('/jhb')
 def jhb():
-    obj = g.graphnodes[172]
-    print(obj)
-    return str(obj['point3d'])
+    return str(g.graph.get_schemata())
 
 
 if __name__ == '__main__':
