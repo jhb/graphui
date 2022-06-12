@@ -12,7 +12,7 @@
               class="uk-form uk-form-width-large uk-margin-small-top"
               hx-target="#content"
               hx-push-url="false">
-            <span tal:omit-tag="" metal:define-macro="property_core">
+            <span tal:omit-tag="" metal:define-macro="property_add_core">
 
                 <div class="prop_row">
                     <label class="xuk-text-bold prop_propname" for="prop_name">
@@ -32,13 +32,30 @@
                         Property Type
                     </label>
 
-                    <select class="uk-select prop_value " name="prop_type" id="prop_type">
+                    <select class="uk-select prop_value "
+                            name="prop_type"
+                            id="prop_type"
+                            hx-get="/${obj_type}/${obj.id}/add"
+                            hx-target="#prop_add">
                         <option tal:repeat="(val,desc) conversion.field_types.items()"
-                                value="${val}">${desc}</option>
+                                value="${val}"
+                                tal:attributes="selected val==prop_type">${desc}</option>
                         <option tal:repeat="(val,desc) conversion.field_types.items()"
-                                value="list:${val}">List of ${desc}</option>
+                                value="list:${val}"
+                                tal:attributes="selected 'list:'+val==prop_type">List of ${desc}</option>
 
-                    </select></div>
+                    </select>
+                </div>
+
+                <div class="prop_row">
+                    <label class="prop_propname" for="prop_value">
+                        Property Value
+                    </label>
+                    <div>
+                    <metal tal:define="path 'prop_value';
+                                       mode 'edit'" metal:use-macro="templates['property'].macros['property_core']" />
+                    </div>
+                </div>
 
             </span>
 

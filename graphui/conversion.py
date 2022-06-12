@@ -14,14 +14,14 @@ A helper to just get the variable name
 'foo'
 """
 
+from decimal import Decimal
+
+import pytest
+from neo4j.spatial import WGS84Point, CartesianPoint
 from neo4j.time import Date as date, \
     Time as time, \
     DateTime as datetime, \
     Duration as duration
-from neo4j.spatial import WGS84Point, CartesianPoint
-from decimal import Decimal
-
-import pytest
 
 
 def str2time(string):
@@ -70,6 +70,16 @@ def widgetname(value, mode='view'):
         return name
 
 
+field_types = dict(
+        str="Text",
+        int="Integer",
+        float="Float",
+        bool="Boolean",
+        date="Date",
+        time="Time",
+        datetime="Datetime",
+        cartesianpoint="Point (Cartesian: x, y, z)",
+        wgs84point="Point (WGS84: long, lat, height)")
 
 converters = dict(
         int=int,
@@ -87,20 +97,9 @@ converters = dict(
         duration=data2duration
 )
 
-field_types = dict(
-        str="Text",
-        int="Integer",
-        float="Float",
-        bool="Boolean",
-        date="Date",
-        time="Time",
-        datetime="Datetime",
-        cartesianpoint="Point (Cartesian: x, y, z)",
-        wgs84point="Point (WGS84: long, lat, height)")
-
 def get_default(typ):
     defaults = dict(
-            str='...',
+            str='',
             int=0,
             float=0.0,
             bool=False,

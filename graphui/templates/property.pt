@@ -9,7 +9,7 @@
         <form method="POST"
               action="${get_obj_path(obj)}/${path}"
               id="content"
-              class="uk-form uk-form-width-large"
+              class="uk-form uk-form-width-medium"
               hx-target="#prop_value_${name.replace('.','_')}"
               hx-push-url="false"
              tal:define="is_list type(prop) == list and 1 or 0">
@@ -34,7 +34,8 @@
                         <span tal:define="widget_name conversion.widgetname(value, mode);
                                           name path+'.'+str(repeat.value.index) if is_list else path"
                              metal:use-macro="templates['widgets'].macros[widget_name]"></span>
-                        <div tal:condition="is_list and mode=='edit'"
+                        <div tal:define="mode mode|nothing"
+                             tal:condition="is_list and mode=='edit' and not mode=='add'"
                             class=" uk-margin-left uk-align-right uk-margin-remove-bottom">
                             <a
                                 uk-icon="icon: minus-circle;  ratio: 0.75"

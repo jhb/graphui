@@ -13,7 +13,7 @@
                     </label>
                 </div>
 
-                <div class="prop_value"
+                <div class="prop_value uk-width-medium"
                      id="prop_value_${propname}"
                      tal:define="mode 'view'; path propname">
                     <span metal:use-macro="templates['property'].macros['property_core']"></span>
@@ -41,7 +41,9 @@
         </div>
 
     </div>
-    <div id="prop_add" hx-target="this" class="xuk-margin-small-top">
+    <div id="prop_add"
+         hx-target="#prop_add"
+         class="xuk-margin-small-top">
         <a href="${get_obj_path(obj)}/add"
            uk-icon="icon: plus-circle;  ratio: 0.75"
            class="uk-link-muted"
