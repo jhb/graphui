@@ -1,5 +1,6 @@
 <div metal:use-macro="templates['main'].macros['main']">
     <div metal:fill-slot="content" id="content">
+
         <div class="uk-align-right">
             <a href="/node/${node.id}/delete"
                hx-confirm="Are you sure you want to delete node ${node.id} '${get_display_title(node)}' and all attached edges?"

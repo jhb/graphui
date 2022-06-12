@@ -22,9 +22,22 @@
 <body style="padding-left: 2em"
       hx-select="#content"
       hx-target="#content"
-      tal:attributes="hx-boost str(bool(config.hx_boost)).lower()"
+     tal:attributes="hx-boost str(bool(config.hx_boost)).lower()"
       class="uk-margin-left uk-margin-right">
 <div class="uk-align-right">
+    <small>
+    <form
+        action="/search"
+        method="GET"
+        class="uk-display-inline uk-margin-medium-right">
+        <span id="quicksearch_input"
+             metal:define-macro="quicksearch_input"
+              hx-swap-oob="true">
+            <input name="searchterm"
+                   placeholder="search"
+                   value="">
+        </span>
+    </form></small>
     <a href="/node/add"
        uk-icon="icon: plus-circle;  ratio: 0.75"
        class="uk-link-muted"
