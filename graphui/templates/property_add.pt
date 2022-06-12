@@ -4,21 +4,22 @@
             <span class="uk-text-muted uk-margin-small-left">(${obj.id})</span></a>
         </h4>
 
-        <h4>Add Property</h4>
+
 
         <form method="POST"
               action="${get_obj_path(obj)}"
               id="content"
-              class="uk-form uk-form-width-large uk-margin-small-top"
+              class="uk-form uk-form-width-large uk-margin-top"
               hx-target="#content"
               hx-push-url="false">
+            <h4>Add Property</h4>
             <span tal:omit-tag="" metal:define-macro="property_add_core">
 
                 <div class="prop_row">
                     <label class="xuk-text-bold prop_propname" for="prop_name">
                         New Name
                     </label>
-                    <input id="prop_name" name="prop_name" class="uk-input prop_value" type="text" required
+                    <input id="prop_name" name="prop_name" class="uk-input prop_value   uk-margin-bottom" type="text" required
                            list="propnames" autocomplete="off">
                 </div>
 
@@ -27,12 +28,12 @@
                 </datalist>
 
 
-                <div class="prop_row">
+                <div class="prop_row" >
                     <label class="xuk-text-bold prop_propname" for="prop_type">
                         Property Type
                     </label>
 
-                    <select class="uk-select prop_value "
+                    <select class="uk-select prop_value  uk-margin-bottom"
                             name="prop_type"
                             id="prop_type"
                             hx-get="/${obj_type}/${obj.id}/add"
