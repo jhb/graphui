@@ -47,9 +47,11 @@
                     >
                 </div>
 
-                <div>
+                <div class=" uk-margin-top">
                     <input type="submit" value="save"
-                           class="uk-button uk-button-primary uk-button-small uk-margin-top">
+                           class="uk-button uk-button-primary uk-button-small">
+                    <a href="${get_obj_path(node)}"
+                       class="uk-button uk-button-default uk-button-small">cancel</a>
                 </div>
 
                 <datalist id="label_list">
