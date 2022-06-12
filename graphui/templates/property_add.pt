@@ -5,7 +5,6 @@
         </h4>
 
 
-
         <form method="POST"
               action="${get_obj_path(obj)}"
               id="content"
@@ -19,8 +18,14 @@
                     <label class="xuk-text-bold prop_propname" for="prop_name">
                         New Name
                     </label>
-                    <input id="prop_name" name="prop_name" class="uk-input prop_value   uk-margin-bottom" type="text" required
-                           list="propnames" autocomplete="off">
+                    <input id="prop_name"
+                           name="prop_name"
+                           class="uk-input prop_value uk-margin-bottom"
+                           type="text"
+                           required
+                           list="propnames"
+                           autocomplete="off"
+                           value="${prop_name}">
                 </div>
 
                 <datalist id="propnames">
@@ -28,7 +33,7 @@
                 </datalist>
 
 
-                <div class="prop_row" >
+                <div class="prop_row">
                     <label class="xuk-text-bold prop_propname" for="prop_type">
                         Property Type
                     </label>
@@ -37,13 +42,14 @@
                             name="prop_type"
                             id="prop_type"
                             hx-get="/${obj_type}/${obj.id}/add"
+                            hx-vals='js:{"prop_name":$("#prop_name").val()}'
                             hx-target="#prop_add">
                         <option tal:repeat="(val,desc) conversion.field_types.items()"
-                                value="${val}"
-                                tal:attributes="selected val==prop_type">${desc}</option>
+                            value="${val}"
+                             tal:attributes="selected val==prop_type">${desc}</option>
                         <option tal:repeat="(val,desc) conversion.field_types.items()"
-                                value="list:${val}"
-                                tal:attributes="selected 'list:'+val==prop_type">List of ${desc}</option>
+                            value="list:${val}"
+                             tal:attributes="selected 'list:'+val==prop_type">List of ${desc}</option>
 
                     </select>
                 </div>
@@ -54,7 +60,7 @@
                     </label>
                     <div>
                     <metal tal:define="path 'prop_value';
-                                       mode 'edit'" metal:use-macro="templates['property'].macros['property_core']" />
+                        mode 'edit'" metal:use-macro="templates['property'].macros['property_core']" />
                     </div>
                 </div>
 

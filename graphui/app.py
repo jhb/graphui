@@ -196,6 +196,7 @@ def add_property(obj_type, obj_or_id,prop_type=None):
             update(obj.id, new_props)
         return redirect(f'/{obj_type}/{obj.id}')
 
+    prop_name = request.values.get('prop_name','').strip()
     if prop_type is None:
         prop_type = request.values.get('prop_type','str')
     if prop_type.startswith('list:'):
@@ -207,6 +208,7 @@ def add_property(obj_type, obj_or_id,prop_type=None):
                        obj=obj,
                        obj_type=obj_type,
                        prop_type=prop_type,
+                       prop_name=prop_name,
                        prop = prop,
                        mode= 'add'
                        )
