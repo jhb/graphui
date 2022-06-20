@@ -82,17 +82,17 @@ def search():
     # an always working fulltext across nodes and relations. No indexes used though...
     # TODO: have some form of dynamic fulltext field or index
 
-    searchterm = request.values.get('searchterm', '').strip()
+    search_term = request.values.get('searchterm', '').strip()
 
     out = AttrDict()
-    search_lower = searchterm.lower()
+    search_lower = search_term.lower()
 
     # TODO mix in optional search in _._searchable_text
 
-    out['nodes'] = g.graph.find_nodes(searchterm)
-    out['relationships'] = g.graph.find_edges(searchterm)
+    out['nodes'] = g.graph.find_nodes(search_lower)
+    out['relationships'] = g.graph.find_edges(search_lower)
 
-    return tpl('search', result=out, searchterm=searchterm)
+    return tpl('search', result=out, searchterm=search_term)
 
 
 @app.route('/node/<int:node_id>')
@@ -111,7 +111,7 @@ def fetch_obj(obj_type, obj_or_id):
 
 @app.route('/<obj_type>/<int:obj_or_id>/<path>/<mode>', methods=['GET'])
 @app.route('/<obj_type>/<int:obj_or_id>/<path>', methods=['GET', 'POST'])
-def property_ (obj_type, obj_or_id, path, mode='view'):
+def property_(obj_type, obj_or_id, path, mode='view'):
     obj = fetch_obj(obj_type, obj_or_id)
     prop = obj[path]
     if request.method == 'POST':
@@ -177,10 +177,11 @@ def property_element_delete(obj_type, obj_or_id, path, pos):
     update(obj.id, new_props)
     return redirect(f'/{obj_type}/{obj.id}/{path}/edit')
 
+
 @app.route('/<obj_type>/<int:obj_or_id>/add', methods=['GET'])
 @app.route('/<obj_type>/<int:obj_or_id>/add/<prop_type>', methods=['GET'])
 @app.route('/<obj_type>/<int:obj_or_id>', methods=['POST'])
-def add_property(obj_type, obj_or_id,prop_type=None):
+def add_property(obj_type, obj_or_id, prop_type=None):
     obj = fetch_obj(obj_type, obj_or_id)
     if request.method == "POST":
         prop_type = request.values['prop_type']
@@ -197,9 +198,9 @@ def add_property(obj_type, obj_or_id,prop_type=None):
             update(obj.id, new_props)
         return redirect(f'/{obj_type}/{obj.id}')
 
-    prop_name = request.values.get('prop_name','').strip()
+    prop_name = request.values.get('prop_name', '').strip()
     if prop_type is None:
-        prop_type = request.values.get('prop_type','str')
+        prop_type = request.values.get('prop_type', 'str')
     if prop_type.startswith('list:'):
         prop = [conversion.get_default(prop_type[5:])]
     else:
@@ -210,8 +211,8 @@ def add_property(obj_type, obj_or_id,prop_type=None):
                        obj_type=obj_type,
                        prop_type=prop_type,
                        prop_name=prop_name,
-                       prop = prop,
-                       mode= 'add'
+                       prop=prop,
+                       mode='add'
                        )
 
 
@@ -304,7 +305,7 @@ def labels(node_id):
     mode = 'edit'
 
     if request.method == "POST":
-        new_labels = sorted({l.strip() for l in request.values.getlist('labels')})
+        new_labels = sorted({label.strip() for label in request.values.getlist('labels')})
         if add_label := request.values.get('add_label', '').strip():
             new_labels.append(add_label)
         node = g.graph.set_labels(node_id, new_labels)
@@ -317,16 +318,14 @@ def labels(node_id):
 def label_delete(node_id, label):
     label = label.strip()
     node = g.graph.get_node(node_id)
-    new_labels = sorted([l for l in node.labels if l != label])
+    new_labels = sorted([_ for _ in node.labels if _ != label])
     node = g.graph.set_labels(node_id, new_labels)
     return tpl_no_push('labels', node=node, mode='edit')
 
+
 def has_schema(obj, schema):
-    print(obj.id, schema['title'])
-    print(list(k for k in schema['schema_properties']))
-    out = all(k in obj for k in schema['schema_properties'])
-    print(out)
-    return out
+    return all(k in obj for k in schema['schema_properties'])
+
 
 @app.post('/<obj_type>/<int:obj_or_id>/schema')
 def schema_add(obj_type, obj_or_id):
@@ -335,16 +334,12 @@ def schema_add(obj_type, obj_or_id):
     schema_node = g.graph.get_node(schema_id)
     new_props = dict(obj)
     for prop_name in schema_node['schema_properties']:
-        if prop_name == 'schema_properties':
-            value = ['']
-        else:
-            value = ''
+        value = [''] if prop_name == 'schema_properties' else ''
         if prop_name not in new_props:
-            new_props[prop_name]=value
+            new_props[prop_name] = value
     update = getattr(g.graph, f'update_{obj_type}')
     update(obj.id, new_props)
     return redirect(f'/{obj_type}/{obj.id}')
-
 
 
 @app.route('/favicon.ico')

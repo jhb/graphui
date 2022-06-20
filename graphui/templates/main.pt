@@ -14,7 +14,9 @@
     <script src="${url_for('static', filename='uikit/js/uikit.min.js')}"></script>
     <script src="${url_for('static', filename='uikit/js/uikit-icons.min.js')}"></script>
     <script src="${url_for('static', filename='jquery-3.6.0.min.js')}"></script>
-    <script src='/static/panzoom.min.js'></script>
+    <link rel="stylesheet" href="${url_for('static', filename='easymde.min.css')}"/>
+    <script src="${url_for('static', filename='easymde.min.js')}"></script>
+    <script src="${url_for('static', filename='panzoom.min.js')}"></script>
     <link rel="stylesheet" href="${url_for('static', filename='fontawesome/css/all.css')}">
     <link rel="stylesheet" href="${url_for('static', filename='graphui.css')}"/>
     <link rel="shortcut icon" href="${url_for('static', filename='favicon.ico') }">

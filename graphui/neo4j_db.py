@@ -166,8 +166,7 @@ class Graph:
         schema_node=result.single()['n']
         where = ' and '.join(f'n.{p} is not NULL' for p in schema_node['schema_properties'])
         result2 = self.run(f"match (n) where {where} return distinct n order by n.title")
-        schemata = [row['n'] for row in result2]
-        return schemata
+        return [row['n'] for row in result2]
 
 
 class Connection:
