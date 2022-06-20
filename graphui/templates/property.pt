@@ -9,7 +9,7 @@
         <form method="POST"
               action="${get_obj_path(obj)}/${path}"
               id="content"
-              class="uk-form uk-form-width-medium"
+              class="uk-form "
               hx-target="#prop_value_${name.replace('.','_')}"
               hx-push-url="false"
              tal:define="is_list type(prop) == list and 1 or 0">
