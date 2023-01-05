@@ -96,7 +96,6 @@ def search():
 
 
 @app.route('/node/<int:node_id>')
-@app.route('/node/<int:node_id>/')
 def get_node(node_id):
     if config.debug:  # TODO use logging
         pprint(conversion.parse_form(request.values.items()))
