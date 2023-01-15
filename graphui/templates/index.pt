@@ -1,23 +1,39 @@
-<div metal:use-macro="templates['main'].macros['main']">
+<span tal:omit-tag="" metal:define-macro="main">
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>GraphUI ${template_name}</title>
+    <script src="${url_for('static', filename='htmx.js')}"></script>
+    <script src="${url_for('static', filename='debug.js')}"></script>
 
-    <div metal:fill-slot="content" id="content">
-        <div class="uk-margin-auto uk-text-center uk-margin-large-top">
-            <h1 class="uk-text-bold">GraphUI</h1>
+    <link rel="stylesheet" href="${url_for('static', filename='uikit/css/uikit.css')}"/>
+    <script src="${url_for('static', filename='uikit/js/uikit.min.js')}"></script>
+    <script src="${url_for('static', filename='uikit/js/uikit-icons.min.js')}"></script>
+    <script src="${url_for('static', filename='jquery-3.6.0.min.js')}"></script>
+    <link rel="stylesheet" href="${url_for('static', filename='easymde.min.css')}"/>
+    <script src="${url_for('static', filename='easymde.min.js')}"></script>
+    <script src="${url_for('static', filename='panzoom.min.js')}"></script>
+    <link rel="stylesheet" href="${url_for('static', filename='fontawesome/css/all.css')}">
+    <link rel="stylesheet" href="${url_for('static', filename='graphui.css')}"/>
+    <link rel="shortcut icon" href="${url_for('static', filename='favicon.ico') }">
+</head>
+<body style="padding-left: 2em">
+<script>$resultset = {}</script>
+<script id="resultset">
 
-            <form action="/search">
-
-                <input type="search" name="searchterm" value="${searchterm|nothing}"
-                       placeholder="Full-text search"
-                       class="uk-form-large uk-input uk-width-large"
-                       style="border: 1px solid grey"/>
-                <div>&nbsp;</div>
-                <button class="uk-button uk-button-default" name="qtype" value="fulltext">search
-                </button>
-<!--?                <button class="uk-button uk-button-default" name="qtype" value="query">Query-->
-<!--?                </button>-->
+</script>
+<div id="side">#left</div>
+<div id="input" hx-get="/query" hx-trigger="load" hx-target="this" hx-swap="outerHTML">#input</div>
+<div id="display">#display
 
 
-            </form>
-        </div>
-    </div>
 </div>
+<div id="detail">#detail</div>
+<div id="footer">#footer</div>
+</body>
+</html>
+</span>

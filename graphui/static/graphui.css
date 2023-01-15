@@ -1,29 +1,38 @@
-
-.property div, ul {
-    border: 0px solid red;
-}
-
-@media (min-width: 40em) {
-    .properties, .subproperties, .some_table {
-        display: table
-    }
-
-    .property, .subproperty, .prop_row, .some_row {
-        display: table-row
-    }
-
-    .prop_key, .prop_value, .prop_type, .prop_edit, .prop_delete,
-    .subprop_key, .subprop_value, .subprop_type, .subprop_edit, .subprop_delete,
-    .some_cell {
-        display: table-cell;
-        padding: 0.5em 0.5em;
-    }
-
-    .property ul {
-        margin-left: -1em
-    }
+#side {
+    grid-area: left;
 
 }
 
-p {margin: 0 !important }
+#input {
+    grid-area: input;
+}
 
+#display {
+    grid-area: display;
+}
+
+#detail {
+    grid-area: detail;
+}
+
+#footer {
+    grid-area: footer;
+}
+
+#input textarea {}
+
+div {border: 1px solid black;}
+html, body {height: 100%}
+body {
+    width: 99%;
+    margin: 0 auto;
+    display: grid;
+    grid-row-gap: 0px;
+    grid-template-columns: 15% 60% 25%;
+    grid-template-rows: 15% 75% 5%;
+    grid-template-areas:
+      "left input input"
+      "left display detail"
+      "left footer detail"
+      ;
+}

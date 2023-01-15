@@ -9,7 +9,7 @@ class Graph:
         self._tx = None
         self.debug = debug
 
-    def run(self, statement, **kwargs):
+    def run(self, statement, **kwargs) -> neo4j.Result:
         # sourcery skip: assign-if-exp, inline-immediately-returned-variable, lift-return-into-if
         if self.debug:
             print(statement, kwargs)

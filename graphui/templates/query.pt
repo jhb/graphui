@@ -1,0 +1,19 @@
+<form action="/query" hx-post="/query" method="POST" hx-target="this" hx-swap="outerHTML">
+    <textarea name="querystring" rows="5" cols="80"
+    tal:content="'querystring' in kwargs and querystring or default">Match p=(n)-[r]->(m) return p limit 10</textarea><br>
+        <input value="replace"      type="submit">
+
+<div tal:condition="'jdata' in kwargs" tal:omit-tag="">
+
+
+<script id="resultset" hx-swap-oob="true" >
+    var $result_update = ${jdata};
+    $.extend(true,$resultset, $result_update);
+</script>
+
+
+<div id="display" hx-swap-oob="true">
+
+</div>
+</div>
+</form>

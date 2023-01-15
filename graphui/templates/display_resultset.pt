@@ -1,0 +1,16 @@
+<div metal:define-macro="display_resultset" tal:define="resultset session.get('resultset',dict(nodes=[],edges=[]))">
+
+    <div id="resultnodes">
+        <div class="resultnode" tal:repeat="node resultset.nodes">
+            nodeid: ${node}
+        </div>
+
+    </div>
+    <div>&nbsp;</div>
+    <div id="resultedges">
+        <div class="resultedge" tal:repeat="edge resultset.edges">
+            edgeid: ${edge[0]}
+        </div>
+
+    </div>
+</div>
