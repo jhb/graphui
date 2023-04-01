@@ -1,15 +1,20 @@
-<div metal:define-macro="display_resultset" tal:define="resultset session.get('resultset',dict(nodes=[],edges=[]))">
+<div metal:define-macro="display">
+<h3>Resultset</h3>
 
+    <h4>Nodes</h4>
     <div id="resultnodes">
-        <div class="resultnode" tal:repeat="node resultset.nodes">
-            nodeid: ${node}
+        <div class="resultnode" tal:repeat="node resultdata['nodes']">
+            <a hx-get="/node/${node.id}"
+               hx-target="#detail"
+               hx-trigger="click        ">${get_value(node)}</a>
         </div>
 
     </div>
     <div>&nbsp;</div>
+    <h4>Edges</h4>
     <div id="resultedges">
-        <div class="resultedge" tal:repeat="edge resultset.edges">
-            edgeid: ${edge[0]}
+        <div class="resultedge" tal:repeat="edge resultdata['edges']">
+            ${edge.type}
         </div>
 
     </div>

@@ -17,12 +17,16 @@
     <link rel="stylesheet" href="${url_for('static', filename='easymde.min.css')}"/>
     <script src="${url_for('static', filename='easymde.min.js')}"></script>
     <script src="${url_for('static', filename='panzoom.min.js')}"></script>
+    <script src="${url_for('static', filename='gui.js')}"></script>
+<script src="https://unpkg.com/three"></script>
+  <script src="https://unpkg.com/three-spritetext"></script>
+    <script src="https://unpkg.com/3d-force-graph"></script>
     <link rel="stylesheet" href="${url_for('static', filename='fontawesome/css/all.css')}">
     <link rel="stylesheet" href="${url_for('static', filename='graphui.css')}"/>
     <link rel="shortcut icon" href="${url_for('static', filename='favicon.ico') }">
 </head>
 <body style="padding-left: 2em">
-<script>$resultset = {}</script>
+<script>resultset = {}</script>
 <script id="resultset">
 
 </script>
@@ -32,6 +36,7 @@
 
 
 </div>
+
 <div id="detail">#detail</div>
 <div id="footer">#footer</div>
 </body>

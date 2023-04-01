@@ -21,7 +21,7 @@
 
 #input textarea {}
 
-div {border: 1px solid black;}
+div {xborder: 1px solid black;}
 html, body {height: 100%}
 body {
     width: 99%;
@@ -35,4 +35,8 @@ body {
       "left display detail"
       "left footer detail"
       ;
+}
+
+#display {
+    overflow: scroll;
 }

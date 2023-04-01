@@ -19,6 +19,11 @@ app.config["SESSION_TYPE"] = "filesystem"
 app.config["SESSION_FILE_DIR"]='sessions'
 Session(app)
 
+class AttrDict(dict):
+
+    def __getattr__(self, key):
+       return self[key]
+
 @app.before_request
 def before():
     g.graph = connection.graph(debug=config.debug)
@@ -44,6 +49,8 @@ def tpl(template_name, **kwargs):
                    session=session,
                    url_for=flask.url_for,
                    kwargs=kwargs,
+                   json=json,
+                   get_value = get_value,
                    **kwargs)
 
 
@@ -62,24 +69,88 @@ def get_index():
 @app.route('/query', methods=['POST'])
 def query():
     querystring = request.values.get('querystring','')
+    display_name = request.values.get('display','resultset')
     result = g.graph.run(querystring)
     resultgraph = result.graph()
     nodes = [n.id for n in resultgraph.nodes]
     edges = [[r.id,r.start_node.id,r.end_node.id] for r in resultgraph.relationships]
-    data = dict(nodes=nodes,edges=edges)
-    session['resultset']=data
-    jdata = json.dumps(data, indent=2)
+    resultset = dict(nodes=nodes,edges=edges)
+    session['resultset']=resultset
 
 
     return tpl('query', querystring=querystring,
                         resultgraph = resultgraph,
                         result=result,
-                        data=data,
-                        jdata=jdata)
+                        resultset=resultset,
+                        display_name = display_name)
 
-@app.route('/display_resultset')
-def display_3d():
-    return tpl('display_resultset')
+def get_resultset():
+    return session.get('resultset', dict(nodes=[], edges=[]))
+
+def get_resultdata(resultset):
+    out = dict(nodes=[],edges=[])
+
+    result = g.graph.run('match (n) where id(n) in $nodeids with distinct n as n return n',
+                         nodeids=resultset['nodes'])
+    for row in result:
+        out['nodes'].append(row['n'])
+
+    query = 'match ()-[r]-() where id(r) in $edgeids ' \
+        'return distinct r'
+    result = g.graph.run(query,
+                         edgeids=[e[0] for e in resultset['edges']])
+    for row in result:
+        out['edges'].append(row['r'])
+    return out
+
+def get_value(obj,keys=['name','title','id']):
+    for key in keys:
+        if key in obj:
+            return obj[key]
+    return ''
+
+def node2dict(node):
+    out = AttrDict()
+    out['id'] = node.id
+    out['labels'] = list(node.labels)
+    out['properties']=AttrDict(node)
+    out['nodename']=get_value(out['properties'])
+    return out
+
+def edge2dict(edge):
+    out = AttrDict()
+    out['id'] = edge.id
+    out['type'] = edge.type
+    out['source_id'] = edge.start_node.id
+    out['target_id'] = edge.end_node.id
+    out['properties'] = AttrDict(edge)
+    return out
+
+def resultdata2dicts(resultdata):
+    out = dict(nodes={},
+               edges={})
+    for node in resultdata['nodes']:
+        out['nodes'][node.id] =node2dict(node)
+    for edge in resultdata['edges']:
+        out['edges'][edge.id]=edge2dict(edge)
+    return out
+
+@app.route('/display')
+def display():
+    display_name = request.values.get('display', 'resultset')
+    resultset = get_resultset()
+    resultdata = get_resultdata(resultset)
+    return tpl(f'display_{display_name}',
+               resultset=resultset,
+               resultdata=resultdata,
+               resultdicts = resultdata2dicts(resultdata))
+
+@app.route('/node/<int:nodeid>')
+def node(nodeid):
+    res = g.graph.run('match (n) where id(n) = $nodeid return n', nodeid=nodeid)
+    return tpl('node',
+               node=res.single()['n'])
+
 
 @app.route('/favicon.ico')
 def favicon():
