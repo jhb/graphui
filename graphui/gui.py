@@ -7,6 +7,7 @@ import neo4j
 from chameleon_fetcher import ChameleonFetcher
 from flask import Flask, request, g, redirect, session
 from attr_dict import AttrDict
+from graphui.graphui import conversion
 from neo4j_db import Connection
 from settings import config
 from flask_session import Session
@@ -151,6 +152,24 @@ def node(nodeid):
     return tpl('node',
                node=res.single()['n'])
 
+
+@app.route('/<obj_type>/<int:_id>/<path>', methods=['GET', 'POST'])
+def property_(obj_type, _id, path):
+    res = g.graph.run('match (n) where id(n) = $nodeid return n', nodeid=_id)
+    node = res.single()['n']
+    if request.method == 'POST':
+        value = request.values['value']
+        new_props = {path:value}
+        g.graph.update_node_property(_id,path,value)
+        return redirect(f'/{obj_type}/{_id}')
+
+    value = node[path]
+    return tpl('property',
+               obj_type=obj_type,
+               _id=_id,
+               path=path,
+               node=node,
+               value=value,)
 
 @app.route('/favicon.ico')
 def favicon():

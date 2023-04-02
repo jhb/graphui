@@ -1,0 +1,68 @@
+<div id="3d">
+</div>
+
+<script>
+    // The data as such
+    var resultdata =${json.dumps(resultdicts, indent=2)};
+
+    // Wrangle for this view
+    var data = {
+        nodes: Object.values(resultdata.nodes).map(node => ({
+            id: node.id,
+            name: node.nodename,
+            labels: node.labels
+        })),
+        links: Object.values(resultdata.edges).map(edge => ({
+            source: edge.source_id,
+            target: edge.target_id,
+            type: edge.type
+        }))
+    }
+
+    // The actual view
+
+
+    var myGraph = ForceGraph3D()(document.getElementById('3d'))
+        .width($('#display').width() - 10)
+        .height($('#display').height())
+        .nodeAutoColorBy('labels')
+        .onNodeClick(function (node, prevnode) {
+            if (node) {
+                nodedetails(node.id);
+            }
+        })
+        .nodeThreeObject(node => {
+            const sprite = new SpriteText(node.name);
+            sprite.material.depthWrite = false; // make sprite background transparent
+            sprite.color = node.color;
+            sprite.textHeight = 4;
+            return sprite;
+        })
+        .linkColor(link => 'white')
+        .linkLabel(link => link.type)
+        .linkWidth(0.5)
+        .linkDirectionalParticles(5)
+        .linkDirectionalParticleSpeed(0.005)
+        .linkDirectionalArrowLength(3.5)
+        .linkDirectionalArrowRelPos(1)
+        .linkThreeObjectExtend(true)
+        .linkThreeObject(link => {
+            // extend link with text sprite
+            const sprite = new SpriteText(link.type);
+            sprite.color = 'lightgray';
+            sprite.textHeight = 1.5;
+            return sprite;
+        })
+        .linkPositionUpdate((sprite, {start, end}) => {
+            const middlePos = Object.assign(...['x', 'y', 'z'].map(c => ({
+                [c]: start[c] + (end[c] - start[c]) / 2 // calc middle point
+            })));
+
+            // Position sprite
+            Object.assign(sprite.position, middlePos);
+        })
+        .graphData(data);
+    //console.log(myGraph.cameraPosition());
+    //console.log(myGraph.cameraPosition({x: 0, y: 0, z: 200}))
+    //myGraph.zoomToFit();
+</script>

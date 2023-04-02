@@ -59,6 +59,9 @@ class Graph:
     def update_node(self, id, props):
         return self.run('match (n) where id(n)=$id set n=$props return n', id=id, props=props).single()['n']
 
+    def update_node_property(self,id,name,value):
+        return self.run(f'match (n) where id(n)=$id set n.{name}=$value return n',id=id,value=value).single()['n']
+
     def set_labels(self, node_id, labels=None):
         labels = labels if labels is not None else []
 

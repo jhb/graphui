@@ -1,0 +1,12 @@
+<div id="detail">
+<h4>${get_value(node)} (${node.id})</h4>
+
+
+    <div>${", ".join(node.labels)}</div>
+    <div>&nbsp;</div>
+<div tal:repeat='item node.items()'>
+    <span hx-get="/node/${node.id}/${item[0]}"
+       hx-target="#detail"
+       hx-trigger="click">${item[0]}: ${item[1]}</span>
+</div>
+</div>

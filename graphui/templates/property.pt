@@ -1,0 +1,11 @@
+<div id="detail">
+<h4>${get_value(node)} (${node.id})</h4>
+<h5>${path}</h5>
+<form action="/${obj_type}/${_id}/${path}" method="POST"
+      hx-post="/${obj_type}/${_id}/${path}"
+      hx-target="#detail">
+    <textarea cols="25" rows="20" name="value">${value}</textarea>
+    <br>
+    <input type="submit" value="save">
+</form>
+</div>
