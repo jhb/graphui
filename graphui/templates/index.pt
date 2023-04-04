@@ -18,9 +18,9 @@
     <script src="${url_for('static', filename='easymde.min.js')}"></script>
     <script src="${url_for('static', filename='panzoom.min.js')}"></script>
     <script src="${url_for('static', filename='gui.js')}"></script>
-<script src="https://unpkg.com/three"></script>
-  <script src="https://unpkg.com/three-spritetext"></script>
-    <script src="https://unpkg.com/3d-force-graph"></script>
+    <script src="${url_for('static', filename='three.js')}"></script>
+    <script src="${url_for('static', filename='three-spritetext.js')}"></script>
+    <script src="${url_for('static', filename='3d-force-graph.js')}"></script>
     <link rel="stylesheet" href="${url_for('static', filename='fontawesome/css/all.css')}">
     <link rel="stylesheet" href="${url_for('static', filename='graphui.css')}"/>
     <link rel="shortcut icon" href="${url_for('static', filename='favicon.ico') }">

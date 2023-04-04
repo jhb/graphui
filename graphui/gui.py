@@ -113,7 +113,7 @@ def get_value(obj,keys=['name','title','id']):
 def node2dict(node):
     out = AttrDict()
     out['id'] = node.id
-    out['labels'] = list(node.labels)
+    out['labels'] = ", ".join(list(node.labels))
     out['properties']=AttrDict(node)
     out['nodename']=get_value(out['properties'])
     return out
