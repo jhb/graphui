@@ -1,0 +1,29 @@
+@startuml
+'!theme plain
+skinparam shadowing true
+
+
+agent Fulltext
+agent Visualisation
+agent PropertyEdit
+agent SchemaSupport
+agent UUID
+agent "**Perspectives**" as Perspectives
+agent "**BaseEdit**" as BaseEdit
+agent "**SchemaEdit**" as SchemaEdit
+agent "**FullEdit**" as FullEdit
+database DBAbstraction
+DBAbstraction-->Fulltext
+DBAbstraction-->PropertyEdit
+Fulltext --> BaseEdit
+Visualisation --> BaseEdit
+PropertyEdit --> BaseEdit
+BaseEdit --> Perspectives
+UUID --> Perspectives
+BaseEdit --> SchemaEdit
+SchemaSupport --> SchemaEdit
+SchemaEdit --> FullEdit
+Perspectives --> FullEdit
+Fulltext..UUID
+PropertyEdit..SchemaSupport
+@enduml
