@@ -33,6 +33,7 @@ CREATE
 (name:Property            {name: 'name',
                            description: 'name of a node',
                            widget: 'string',
+                           arity: '1',
                            graph: 'metaschema'}),
 
 (sourcearity:Property     {name: 'sourcearity',
@@ -54,6 +55,7 @@ CREATE
 
 (description:Property     {name: 'description',
                            description: 'What does it mean?',
+                           arity: '?',
                            widget: 'string',
                            graph: 'metaschema'}),
 
@@ -124,4 +126,4 @@ match (n {graph:'metaschema'}) return *;
 
 // Just fetch the metagraph itself, e.g. all definitions
 
-match (n)-[r:PROP|SOURCE|TARGET]-() where n:Label or n:Relation or n:Property return *;
+match (n) where n:Label or n:Relation or n:Property optional match (n)-[r:PROP|SOURCE|TARGET]-(m) return *;

@@ -45,13 +45,16 @@ class Graph:
         self._tx = None
 
 
-    def create_node(self, props = None):
-        if props is None:
+    def create_node(self, *labels, **props):
+        if not props:
             props = dict(title='...')
+        if labels:
+            labelstring = ':'.join(labels)
+            labelstring = ':'+labelstring
         if props:
-            return self.run('create (n) set n=$props return n', props=props).single()['n']
+            return self.run(f'create (n{labelstring}) set n=$props return n', props=props).single()['n']
         else:
-            return self.run('create (n) return n').single()['n']
+            return self.run(f'create (n{labelstring}) return n').single()['n']
 
     def get_node(self, id):
         return self.run('match (n) where id(n)=$id return n', id=id).single()['n']

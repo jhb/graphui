@@ -1,14 +1,31 @@
 <div id="detail">
-<h4>${get_value(node)} (${node.id})</h4>
+    <h4>( ${get_value(node)} )</h4>
 
 
     <div>${", ".join(node.labels)}</div>
+    <div>Id:  ${node.id}</div>
     <div>&nbsp;</div>
-<div tal:repeat='item node.items()'>
-    <span
-        tal:condition="item[0]!='_searchableText'"
-        hx-get="/node/${node.id}/${item[0]}"
-       hx-target="#detail"
-       hx-trigger="click">${item[0]}: ${item[1]}</span>
-</div>
+    <div tal:repeat='item sorted(node.items())'>
+        <span tal:condition="item[0]!='_searchableText'"
+              tal:define="propnode meta.nln('Property',item[0])">
+            <span title="${propnode.get('description','*no description available*')}">${item[0]}</span>: ${item[1]}
+            &nbsp;&nbsp;
+            <span
+                hx-get="/node/${node.id}/${item[0]}"
+                hx-target="#detail"
+                hx-trigger="click" style="color: gray">edit</span>
+        </span>
+    </div>
+
+    <form>
+        <br>
+        <label for="property_name">Add property</label>
+        <br>
+        <select id="property_name">
+            <option tal:repeat="propnode sorted([n for n in meta.nodes_by_label['Property'] if n['name'] not in node.keys()], key=lambda n: n['name'])"
+                title="${propnode['description']}">${propnode['name']}: ${propnode['widget']}</option>
+
+        </select><br>
+        <textarea id="property_value" cols="20" rows="10"></textarea>
+    </form>
 </div>

@@ -6,7 +6,7 @@
         <div class="resultnode" tal:repeat="node resultdata['nodes']">
             <a hx-get="/node/${node.id}"
                hx-target="#detail"
-               hx-trigger="click">${get_value(node)}</a>
+               hx-trigger="click"><span metal:use-macro="templates['node_widget.pt'].macros.node"></span> </a>
         </div>
 
     </div>

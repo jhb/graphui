@@ -1,9 +1,12 @@
 from forwardlist import ForwardList
 
 
-class Graph:
+class MiniGraph:
 
     def __init__(self):
+        self._clear()
+
+    def _clear(self):
         self.nodes = []
         self.edges = []
         self.nodes_by_id = {}
@@ -12,18 +15,21 @@ class Graph:
         self.nodes_by_label_name = {}
 
     def from_neo4j(self, neo_graph):
+        self._clear()
         for node in neo_graph.nodes:
             Node(self).from_neo4j(node)
 
         for edge in neo_graph.relationships:
             Edge(self).from_neo4j(edge)
+        return self
 
-    def nln(self,label,name):
-        return self.nodes_by_label_name[label][name]
+    def nln(self, label, name):
+        return self.nodes_by_label_name.get(label,{}).get(name,{})
+
 
 class Node(dict):
 
-    def __init__(self, g: Graph, **kwargs):
+    def __init__(self, g: MiniGraph, **kwargs):
         super().__init__(**kwargs)
         self.g = g
         self.id = None
@@ -33,7 +39,6 @@ class Node(dict):
         self.i = {}
         self.o = {}
         self.g.nodes.append(self)
-
 
     def __hash__(self):
         return id(self)
@@ -53,35 +58,34 @@ class Node(dict):
         self.labels = set(neo_node.labels)
         self.update(sorted(neo_node.items()))
         for label in self.labels:
-            gnl = self.g.nodes_by_label.setdefault(label,[])
+            gnl = self.g.nodes_by_label.setdefault(label, [])
             if self not in gnl:
                 gnl.append(self)
-            gnln = self.g.nodes_by_label_name.setdefault(label,{})
+            gnln = self.g.nodes_by_label_name.setdefault(label, {})
             name = self['name']
             if name not in gnln:
-                gnln[name]=self
+                gnln[name] = self
         self.g.nodes_by_id[self.id] = self
         return self
 
     def outE(self, *reltypes):
         return [
-            edge
-            for edge in self.outgoing
-            if not reltypes or edge.reltype in reltypes
+                edge
+                for edge in self.outgoing
+                if not reltypes or edge.reltype in reltypes
         ]
 
     def inE(self, *reltypes):
         return [
-            edge
-            for edge in self.incoming
-            if not reltypes or edge.reltype in reltypes
+                edge
+                for edge in self.incoming
+                if not reltypes or edge.reltype in reltypes
         ]
-
 
 
 class Edge(dict):
 
-    def __init__(self, g, **kwargs):
+    def __init__(self, g: MiniGraph, **kwargs):
         super().__init__(**kwargs)
         self.g = g
         self.id = None
@@ -108,11 +112,11 @@ class Edge(dict):
         self.id = neo_edge.id
         self.update(sorted(neo_edge.items()))
         self.reltype = neo_edge.type
-        
+
         self.source = self.g.nodes_by_id[neo_edge.start_node.id]
         if self not in self.source.outgoing:
             self.source.outgoing.append(self)
-        o =  self.source.o.setdefault(self.reltype,[])
+        o = self.source.o.setdefault(self.reltype, [])
         if self not in o:
             o.append(self)
 

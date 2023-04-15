@@ -1,0 +1,39 @@
+<div id="detail">${''}
+    <h4>Add node</h4>
+    <form tal:define="labelnodes sorted([n for n in meta.nodes_by_label['Label']], key=lambda n: n['name']);
+                      label_name request.values.get('label_name','Property');
+                      thelabel label_name and meta.nln('Label',label_name) or labelnodes[0]"
+          hx-post="/node_add" hx-target="#detail" action="/node_add" method="POST">
+        <br>
+        <label for="property_name">Select Label</label>
+        <br>
+        <select id="label_name" name="label_name" hx-get="/node_add" hx-target="#detail">
+            <option tal:repeat="labelnode labelnodes"
+                title="${labelnode['description']}"
+                tal:attributes="selected label_name==labelnode['name']">${labelnode['name']}</option>
+        </select>
+        <div>&nbsp;</div>
+        <table tal:condition='thelabel'
+               tal:define="propnodes sorted(thelabel.fl.outE('PROP').target, key=lambda n: n['name'])">
+            <tr tal:repeat="propnode propnodes" valign="top">
+                <td><span title="${propnode['description']}">${propnode['name']}</span></td>
+                <td tal:define="widgetname propnode.get('widget','')">
+                    <input
+                        name="properties:${propnode['name']}"
+                        tal:condition="widgetname=='string'"
+                        placeholder="${propnode['description']}"
+                        tal:attributes="required propnode.get('arity','?') in ['1','+']">
+                    ${propnode.get('arity','??')}
+                </td>
+            </tr>
+        </table>
+
+        <button type="submit">Create</button>
+
+
+    </form>
+
+
+
+
+</div>

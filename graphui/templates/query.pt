@@ -1,6 +1,6 @@
 <form action="/query" hx-post="/query" method="POST" hx-target="this" hx-swap="outerHTML">
     <textarea name="querystring" rows="2" cols="80"
-         tal:content="'querystring' in kwargs and querystring or default">Match p=(n)-[r]->(m) return p limit 10</textarea>
+         tal:content="'querystring' in kwargs and querystring or default">Match p=(n) optional match p2=(n)-[r]->(m) return p,p2 limit 100</textarea>
     <input value="replace" type="submit">
 
     <div tal:condition="session.get('resultset',{})" tal:omit-tag="">
@@ -10,8 +10,13 @@
         </div>
 
         <div id="footer" hx-swap-oob="true">
+            <br>
             <a hx-get="/display?display=resultset" hx-target='#display'>Resultset</a>&nbsp; &nbsp; &nbsp;
-            <a hx-get="/display?display=3d" hx-target='#display'>3d</a>
+            <a hx-get="/display?display=3d" hx-target='#display'>3d</a><br>
+            <div style="text-align: right">
+                <span hx-get="/node_add" hx-target="#detail">Add node</span>
+
+            </div>
         </div>
 
     </div>

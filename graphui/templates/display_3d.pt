@@ -1,3 +1,5 @@
+
+<!--?<div style="background-color:white; border: 1px dashed gray; position:relative;left:530px;top:210px;z-index:10;width:100px; height:100px"> TEST </div>-->
 <div id="3d">
 </div>
 
@@ -21,11 +23,15 @@
 
     // The actual view
 
+    if (window.scene) {window.scene.clear(); delete window.scene}
 
     var myGraph = ForceGraph3D()(document.getElementById('3d'))
         .width($('#display').width() - 10)
         .height($('#display').height())
+        .numDimensions(3)
         .nodeAutoColorBy('labels')
+        // .nodeColor(node => (node.color='#FF0000'))
+        .backgroundColor("white")
         .onNodeClick(function (node, prevnode) {
             if (node) {
                 nodedetails(node.id);
@@ -35,10 +41,11 @@
             const sprite = new SpriteText(node.name);
             sprite.material.depthWrite = false; // make sprite background transparent
             sprite.color = node.color;
-            sprite.textHeight = 4;
+            sprite.textHeight = 6;
             return sprite;
         })
-        .linkColor(link => 'white')
+        .linkColor(link => 'darkgray')
+        .linkDirectionalArrowColor(link => "lightgray")
         .linkLabel(link => link.type)
         .linkWidth(0.5)
         .linkDirectionalParticles(5)
@@ -49,7 +56,7 @@
         .linkThreeObject(link => {
             // extend link with text sprite
             const sprite = new SpriteText(link.type);
-            sprite.color = 'lightgray';
+            sprite.color = 'darkgray';
             sprite.textHeight = 1.5;
             return sprite;
         })

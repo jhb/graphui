@@ -1,0 +1,1 @@
+<span metal:define-macro="node">( ${get_value(node)} ${':'.join(node.labels)})</span>
