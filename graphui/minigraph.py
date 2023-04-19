@@ -3,7 +3,8 @@ from forwardlist import ForwardList
 
 class MiniGraph:
 
-    def __init__(self):
+    def __init__(self, meta_labels = None):
+        self.meta_labels = meta_labels is None and [] or meta_labels
         self._clear()
 
     def _clear(self):
@@ -13,6 +14,7 @@ class MiniGraph:
         self.edges_by_id = {}
         self.nodes_by_label = {}
         self.nodes_by_label_name = {}
+        self.non_meta_nodes = {}
 
     def from_neo4j(self, neo_graph):
         self._clear()
@@ -58,13 +60,13 @@ class Node(dict):
         self.labels = set(neo_node.labels)
         self.update(sorted(neo_node.items()))
         for label in self.labels:
-            gnl = self.g.nodes_by_label.setdefault(label, [])
-            if self not in gnl:
-                gnl.append(self)
-            gnln = self.g.nodes_by_label_name.setdefault(label, {})
+            nl = self.g.nodes_by_label.setdefault(label, [])
+            if self not in nl:
+                nl.append(self)
+            nln = self.g.nodes_by_label_name.setdefault(label, {})
             name = self['name']
-            if name not in gnln:
-                gnln[name] = self
+            if name not in nln:
+                nln[name] = self
         self.g.nodes_by_id[self.id] = self
         return self
 

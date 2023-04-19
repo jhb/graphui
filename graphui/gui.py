@@ -12,6 +12,7 @@ from neo4j_db import Connection
 from settings import config
 from flask_session import Session
 from minigraph import MiniGraph
+from time import time
 
 connection = Connection(config.neo4j, config.user, config.password)
 app = Flask(__name__, static_url_path="/static", static_folder='static')
@@ -21,13 +22,17 @@ app.config["SESSION_TYPE"] = "filesystem"
 app.config["SESSION_FILE_DIR"] = 'sessions'
 Session(app)
 
+meta_labels = {'Label', 'Relation', 'Property', 'SOURCE', 'TARGET', 'PROP'}
+
+meta = MiniGraph()
+
 def fetchMeta():
-    meta = MiniGraph()
     neo = connection.graph(debug=config.debug)
     result = neo.run('match (n)  where n:Label or n:Relation or n:Property '
                      'optional match (n)-[r:PROP|SOURCE|TARGET]-(m) '
                      'return *;')
     meta.from_neo4j(result.graph())
+    # meta.time = getMetaTime()
     return meta
 
 
@@ -36,6 +41,7 @@ def fetchMeta():
 def before():
     g.graph = connection.graph(debug=config.debug)
     g.tx = g.graph.tx
+    # getMetaTime()
     g.meta = fetchMeta()
 
 
@@ -112,12 +118,13 @@ def get_resultdata(resultset):
     for row in result:
         out['nodes'].append(row['n'])
 
-    query = 'match ()-[r]-() where id(r) in $edgeids ' \
-            'return distinct r'
+    query = 'match (n)-[r]-(m) where id(r) in $edgeids ' \
+            'return distinct r,n,m'
     result = g.graph.run(query,
                          edgeids=[e[0] for e in resultset['edges']])
     for row in result:
         out['edges'].append(row['r'])
+    out['edges'] = sorted(list(set(out['edges'])), key=lambda e: e.id)
     return out
 
 
@@ -174,6 +181,11 @@ def node(nodeid):
     return tpl('node',
                node=res.single()['n'])
 
+@app.route('/edge/<int:edgeid>')
+def edge(edgeid):
+    res = g.graph.run('match (n)-[r]-(m) where id(r) = $edgeid return n,r,m', edgeid=edgeid)
+    return tpl('edge',
+               edge=res.single()['r'])
 
 @app.route('/<obj_type>/<int:_id>/<path>', methods=['GET', 'POST'])
 def property_(obj_type, _id, path):
@@ -183,6 +195,8 @@ def property_(obj_type, _id, path):
         value = request.values['value']
         new_props = {path: value}
         g.graph.update_node_property(_id, path, value)
+        if set(node.labels).intersection(meta_labels):
+            setMetaTime()
         return redirect(f'/{obj_type}/{_id}')
 
     value = node[path]
@@ -211,6 +225,7 @@ def nodefinder():
 
 @app.route('/node_add', methods=['GET', 'POST'])
 def node_add():
+
     if request.method != 'POST':
         return tpl('node_add')
     label_name = request.values['label_name']
@@ -222,6 +237,42 @@ def node_add():
     newnode = g.graph.create_node(label_name,**props)
     return redirect(f'/node/{newnode.id}')
 
+
+def get_nodes():
+    return [r['n'] for r in g.graph.run('Match (n) return n')]
+
+@app.route('/edge_add', methods=['GET', 'POST'])
+def edge_add():
+    print(request.values)
+    if not request.values.get('submit',''):
+        return tpl('edge_add', time=time(),get_nodes=get_nodes)
+    print(request.values)
+    type_name = request.values['type_name']
+    thetype = g.meta.nln('Relation', type_name)
+    source_id = int(request.values['source_id'])
+    target_id = int(request.values['target_id'])
+    props = {
+            propname: request.values[f'properties:{propname}']
+            for propname in thetype.fl.outE('PROP').target['name']
+    }
+    newedge = g.graph.create_edge(source_id, type_name, target_id)
+    return redirect(f'/edge/{newedge.id}')
+
+def setMetaTime():
+    t = time()
+    g.graph.run("call apoc.static.set('graphui.meta.time',$t)",t=t)
+    print(f'Set metatime to {t}')
+    return t
+
+def getMetaTime():
+    r = g.graph.run("RETURN apoc.static.get('graphui.meta.time') AS t;")
+    t = r.single()['t']
+    print(f'Got metatime as {t}')
+    return t
+
+@app.route('/test', methods=['GET', 'POST'])
+def test():
+    return tpl('test')
 
 @app.route('/favicon.ico')
 def favicon():

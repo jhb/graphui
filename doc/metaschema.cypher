@@ -33,18 +33,15 @@ CREATE
 (name:Property            {name: 'name',
                            description: 'name of a node',
                            widget: 'string',
-                           arity: '1',
                            graph: 'metaschema'}),
 
 (sourcearity:Property     {name: 'sourcearity',
                            description: 'How many relations of this type can the source have',
-                           arity: '1',
                            widget: 'string',
                            graph: 'metaschema'}),
 
 (targetarity:Property     {name: 'targetarity',
                            description: 'How many relations of this type can the target have',
-                           arity: '1',
                            widget: 'string',
                            graph: 'metaschema'}),
 
@@ -62,7 +59,6 @@ CREATE
 (arity:Property           {name: 'arity',
                            description: 'How many values (regex style)',
                            widget: 'string',
-                           arity: '?',
                            graph: 'metaschema'}),
 
 (person:Label             {name: 'Person',
@@ -100,12 +96,11 @@ CREATE
 (property)-[:PROP]->(name),
 (label)-[:SOURCE]->(prop),
 (label)-[:PROP]->(description),
-(source)-[:TARGET]->(label),
+(label)-[:SOURCE]->(source),
 (target)-[:TARGET]->(label),
-(relation)-[:SOURCE]->(source),
+(source)-[:TARGET]->(relation),
 (relation)-[:SOURCE]->(target),
 (relation)-[:PROP]->(description),
-(property)-[:PROP]->(arity),
 (prop)-[:TARGET]->(property),
 (property)-[:PROP]->(description),
 (relation)-[:PROP]->(sourcearity),
@@ -114,8 +109,8 @@ CREATE
 
 (person)-[:PROP]->(firstname),
 (person)-[:PROP]->(lastname),
-(likes)-[:SOURCE]->(person),
-(person)-[:TARGET]->(likes),
+(person)-[:SOURCE]->(likes),
+(likes)-[:TARGET]->(person),
 (person)-[:PROP]->(name),
 
 (alice)-[:LIKES]->(bob),

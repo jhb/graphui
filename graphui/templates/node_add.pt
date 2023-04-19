@@ -3,7 +3,11 @@
     <form tal:define="labelnodes sorted([n for n in meta.nodes_by_label['Label']], key=lambda n: n['name']);
                       label_name request.values.get('label_name','Property');
                       thelabel label_name and meta.nln('Label',label_name) or labelnodes[0]"
-          hx-post="/node_add" hx-target="#detail" action="/node_add" method="POST">
+          hx-post="/node_add"
+          hx-target="#detail"
+          hx-swap="outerHTML"
+          action="/node_add"
+          method="POST">
         <br>
         <label for="property_name">Select Label</label>
         <br>
@@ -16,7 +20,7 @@
         <table tal:condition='thelabel'
                tal:define="propnodes sorted(thelabel.fl.outE('PROP').target, key=lambda n: n['name'])">
             <tr tal:repeat="propnode propnodes" valign="top">
-                <td><span title="${propnode['description']}">${propnode['name']}</span></td>
+                <td style="width: 12ch"><span title="${propnode['description']}">${propnode['name']}</span></td>
                 <td tal:define="widgetname propnode.get('widget','')">
                     <input
                         name="properties:${propnode['name']}"
@@ -28,6 +32,21 @@
             </tr>
         </table>
 
+        <div>&nbsp;</div>
+
+        <ul tal:condition="label_name=='Relation'">
+            <li>Sourcelabels auswählen</li>
+            <li>Targetlabels auswählen</li>
+
+        </ul>
+
+        <ul tal:condition="label_name=='Label'">
+            <li>Properties auswählen</li>
+        </ul>
+
+        <ul tal:condition="label_name=='Property'">
+            <li>Labels auswählen</li>
+        </ul>
         <button type="submit">Create</button>
 
 

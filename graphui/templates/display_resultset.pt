@@ -14,7 +14,13 @@
     <h4>Edges</h4>
     <div id="resultedges">
         <div class="resultedge" tal:repeat="edge resultdata['edges']">
-            ${edge.type}
+            <a hx-get="/edge/${edge.id}"
+               hx-target="#detail"
+               hx-trigger="click">
+            <span tal:define='node edge.start_node' metal:use-macro="templates['node_widget.pt'].macros.node"></span>
+            -[${edge.type}]->
+            <span tal:define='node edge.end_node' metal:use-macro="templates['node_widget.pt'].macros.node"></span>
+            </a> ${edge.id}
         </div>
 
     </div>

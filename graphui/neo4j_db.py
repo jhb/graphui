@@ -1,5 +1,6 @@
 import neo4j
 from neo4j import GraphDatabase
+from time import time
 
 
 class Graph:
@@ -173,6 +174,8 @@ class Graph:
         where = ' and '.join(f'n.{p} is not NULL' for p in schema_node['schema_properties'])
         result2 = self.run(f"match (n) where {where} return distinct n order by n.title")
         return [row['n'] for row in result2]
+
+
 
 
 class Connection:

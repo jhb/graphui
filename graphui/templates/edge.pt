@@ -1,22 +1,21 @@
 <div id="detail">
-    <h4>( ${get_value(node)} )</h4>
+    <h4>( ${edge.start_node['name']} ) -[${edge.type}]-> ( ${edge.end_node['name']} )</h4>
 
 
-    <div>${", ".join(node.labels)}</div>
-    <div>Id:  ${node.id}</div>
+    <div>Id:  ${edge.id}</div>
     <div>&nbsp;</div>
     <table style="width: 100%">
-    <span tal:omit-tag="" tal:repeat='item sorted(node.items())' >
+    <span tal:omit-tag="" tal:repeat='item sorted(edge.items())' >
     <tr tal:condition="item[0]!='_searchableText'"
               tal:define="propnode meta.nln('Property',item[0])" valign="top">
-        <td style="max-width: 12ch">
+        <td style="width: 12ch">
 
             <span title="${propnode.get('description','*no description available*')}">${item[0]}</span>
 
         </td>
         <td> ${item[1]}</td>
         <td><span
-                hx-get="/node/${node.id}/${item[0]}"
+                hx-get="/edge/${edge.id}/${item[0]}"
                 hx-target="#detail"
                 hx-trigger="click" style="color: gray">edit</span>
         </td>
@@ -29,7 +28,7 @@
         <label for="property_name">Add property</label>
         <br>
         <select id="property_name">
-            <option tal:repeat="propnode sorted([n for n in meta.nodes_by_label['Property'] if n['name'] not in node.keys()], key=lambda n: n['name'])"
+            <option tal:repeat="propnode sorted([n for n in meta.nodes_by_label['Property'] if n['name'] not in edge.keys()], key=lambda n: n['name'])"
                 title="${propnode['description']}">${propnode['name']}: ${propnode['widget']}</option>
 
         </select>

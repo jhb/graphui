@@ -1,0 +1,84 @@
+<div id="detail">${''}
+    <h4>Add edge</h4>
+    <form hx-post="/edge_add"
+          action="/edge_add"
+          hx-target="#detail"
+          hx-swap="outerHTML"
+          hx-trigger="change from:#type_name, click from:#edge_submit"
+          tal:define="typenodes sorted([n for n in meta.nodes_by_label['Relation']], key=lambda n: n['name']);
+                      type_name request.values.get('type_name','PROP');
+                      thetype type_name and meta.nln('Relation',type_name) or typenodes[0]">
+        <br>
+
+
+        <label for="type_name">Select type&nbsp;&nbsp;&nbsp;</label>
+        <select
+            id="type_name" name="type_name">
+            <option tal:repeat="typenode typenodes"
+                title="${typenode['description']}"
+                 tal:attributes="selected type_name==typenode['name']">${typenode['name']}</option>
+        </select>
+        <br>
+        <div>&nbsp;</div>
+
+        <label for="type_name">Select source</label>
+        <select tal:define="
+                sourcenodes sorted([n for n in get_nodes()], key=lambda n: n['name']);
+                source_labels set(thetype.fl.inE('SOURCE').source['name']);
+                sourcenodes [tn for tn in sourcenodes if set(tn.labels).intersection(source_labels)];"
+            id="source_id" name="source_id">
+            <option tal:define="source_id int(request.values.get('source_id',-1));
+                thesource source_id and meta.nodes_by_id.get(source_id,sourcenodes[0])" tal:repeat="sourcenode sourcenodes"
+                title="${sourcenode['description']}"
+                value="${sourcenode.id}"
+                 tal:attributes="selected source_id==sourcenode.id">
+                ( ${get_value(sourcenode)} ${':'.join(sourcenode.labels)})
+            </option>
+        </select>
+        <br>
+
+        <label for="type_name">Select target</label>
+        <select tal:define="
+                targetnodes sorted([n for n in get_nodes()], key=lambda n: n['name']);
+                target_labels set(thetype.fl.outE('TARGET').target['name']);
+                targetnodes [tn for tn in targetnodes if set(tn.labels).intersection(target_labels)];"
+            id="target_id" name="target_id" >
+            <option tal:define="target_id int(request.values.get('target_id',-1));
+                                thetarget target_id and meta.nodes_by_id.get(target_id,targetnodes[0])" tal:repeat="targetnode targetnodes"
+                title="${targetnode['description']}"
+                value="${targetnode.id}"
+                 tal:attributes="selected target_id==targetnode.id">
+                ( ${get_value(targetnode)} ${':'.join(targetnode.labels)})
+            </option>
+        </select>
+
+        <br>
+        <span tal:define="typenodes sorted([n for n in meta.nodes_by_label['Relation']], key=lambda n: n['name']);
+            type_name request.values.get('type_name','PROP');
+                thetype type_name and meta.nln('Relation',type_name) or typenodes[0]">
+        <table tal:condition='thetype'
+             tal:define="propnodes sorted(thetype.fl.outE('PROP').target, key=lambda n: n['name'])">
+            <tr tal:repeat="propnode propnodes" valign="top">
+                <td style="width: 12ch"><span
+                    title="${propnode['description']}">${propnode['name']}</span></td>
+                <td tal:define="widgetname propnode.get('widget','')">
+                    <input
+                        name="properties:${propnode['name']}"
+                         tal:condition="widgetname=='string'"
+                        placeholder="${propnode['description']}"
+                         tal:attributes="required propnode.get('arity','?') in ['1','+']">
+                    ${propnode.get('arity','??')}
+                </td>
+            </tr>
+        </table>
+</span>
+
+
+        <br>
+        <br>
+        <input id="edge_submit" type="submit" name="submit" value="Create" >
+
+    </form>
+
+
+</div>

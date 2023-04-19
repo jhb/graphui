@@ -9,18 +9,17 @@
     <title>GraphUI ${template_name}</title>
     <script src="${url_for('static', filename='htmx.js')}"></script>
     <script src="${url_for('static', filename='debug.js')}"></script>
-
-    <link rel="stylesheet" href="${url_for('static', filename='uikit/css/uikit.css')}"/>
     <script src="${url_for('static', filename='uikit/js/uikit.min.js')}"></script>
     <script src="${url_for('static', filename='uikit/js/uikit-icons.min.js')}"></script>
     <script src="${url_for('static', filename='jquery-3.6.0.min.js')}"></script>
-    <link rel="stylesheet" href="${url_for('static', filename='easymde.min.css')}"/>
     <script src="${url_for('static', filename='easymde.min.js')}"></script>
     <script src="${url_for('static', filename='panzoom.min.js')}"></script>
     <script src="${url_for('static', filename='gui.js')}"></script>
     <script src="${url_for('static', filename='three.js')}"></script>
     <script src="${url_for('static', filename='three-spritetext.js')}"></script>
     <script src="${url_for('static', filename='3d-force-graph.js')}"></script>
+    <link rel="stylesheet" href="${url_for('static', filename='uikit/css/uikit.css')}"/>
+    <link rel="stylesheet" href="${url_for('static', filename='easymde.min.css')}"/>
     <link rel="stylesheet" href="${url_for('static', filename='fontawesome/css/all.css')}">
     <link rel="stylesheet" href="${url_for('static', filename='graphui.css')}"/>
     <link rel="shortcut icon" href="${url_for('static', filename='favicon.ico') }">

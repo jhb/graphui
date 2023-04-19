@@ -38,5 +38,6 @@ class ForwardList(list):
     def __call__(self,*args,**kwargs) -> Self:
         return ForwardList(i(*args,**kwargs) for i in self)
 
+
     def __hash__(self):
         return id(self)
