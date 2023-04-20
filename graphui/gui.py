@@ -13,6 +13,7 @@ from settings import config
 from flask_session import Session
 from minigraph import MiniGraph
 from time import time
+from forwardlist import ForwardList
 
 connection = Connection(config.neo4j, config.user, config.password)
 app = Flask(__name__, static_url_path="/static", static_folder='static')
@@ -132,7 +133,7 @@ def get_value(obj, keys=['name', 'title', 'id']):
     for key in keys:
         if key in obj:
             return obj[key]
-    return ''
+    return 'unknown'
 
 
 def node2dict(node):
@@ -227,14 +228,35 @@ def nodefinder():
 def node_add():
 
     if request.method != 'POST':
-        return tpl('node_add')
+        return tpl('node_add',fl=ForwardList)
     label_name = request.values['label_name']
+
+
     thelabel = g.meta.nln('Label', label_name)
     props = {
         propname: request.values[f'properties:{propname}']
         for propname in thelabel.fl.outE('PROP').target['name']
     }
     newnode = g.graph.create_node(label_name,**props)
+
+
+    if label_name == 'Relation':
+        source_ids = [int(source_id) for source_id in request.values.getlist('source_ids')]
+        target_ids = [int(target_id) for target_id in request.values.getlist('target_ids')]
+        if not source_ids or not target_ids:
+            return tpl('node_add', fl=ForwardList)
+        for source_id in source_ids:
+            g.graph.create_edge(source_id, 'SOURCE', newnode.id)
+        for target_id in target_ids:
+            g.graph.create_edge(newnode.id, 'TARGET', target_id)
+
+    if label_name == 'Label':
+        property_ids = [int(source_id) for source_id in request.values.getlist('property_ids')]
+        for property_id in property_ids:
+            g.graph.create_edge(newnode.id, 'PROP', property_id)
+
+
+
     return redirect(f'/node/{newnode.id}')
 
 

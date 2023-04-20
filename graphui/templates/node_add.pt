@@ -24,7 +24,7 @@
                 <td tal:define="widgetname propnode.get('widget','')">
                     <input
                         name="properties:${propnode['name']}"
-                        tal:condition="widgetname=='string'"
+                        tal:condition="widgetname=='string' or 1"
                         placeholder="${propnode['description']}"
                         tal:attributes="required propnode.get('arity','?') in ['1','+']">
                     ${propnode.get('arity','??')}
@@ -34,15 +34,51 @@
 
         <div>&nbsp;</div>
 
-        <ul tal:condition="label_name=='Relation'">
-            <li>Sourcelabels auswählen</li>
-            <li>Targetlabels auswählen</li>
+        <div tal:condition="label_name=='Relation'">
+            <span tal:define="labelnodes sorted(meta.nodes_by_label['Label'], key=lambda n:n['name'])">
+                <label for="source_ids">Select sources</label><br>
+                <select id="source_ids" name="source_ids" multiple>
+                    <option
+                        tal:define="source_id int(request.values.get('source_id',-1));"
+                        tal:repeat="sourcenode labelnodes"
+                        title="${sourcenode['description']}"
+                        value="${sourcenode.id}"
+                        tal:attributes="selected source_id==sourcenode.id">
+                            ( ${get_value(sourcenode)} ${':'.join(sourcenode.labels)})
+                    </option>
+                </select>
+                <div>&nbsp;</div>
+                <label for="target_ids">Select targets</label><br>
+                <select id="target_ids" name="target_ids" multiple>
+                    <option
+                         tal:define="target_id int(request.values.get('target_id',-1));"
+                         tal:repeat="targetnode labelnodes"
+                        title="${targetnode['description']}"
+                        value="${targetnode.id}"
+                         tal:attributes="selected target_id==targetnode.id">
+                            ( ${get_value(targetnode)} ${':'.join(targetnode.labels)})
+                    </option>
+                </select><br>
 
-        </ul>
+            </span>
+        </div>
 
-        <ul tal:condition="label_name=='Label'">
-            <li>Properties auswählen</li>
-        </ul>
+        <div tal:condition="label_name=='Label'">
+            <span tal:define="propnodes sorted(meta.nodes_by_label['Property'], key=lambda n: n['name'])">
+                <label for="property_ids">Select properties</label><br>
+                <select id="property_ids" name="property_ids" multiple size="10">
+                    <option
+                         tal:define="property_id int(request.values.get('property_id',-1));"
+                         tal:repeat="propertynode propnodes"
+                        title="${propertynode['description']}"
+                        value="${propertynode.id}"
+                         tal:attributes="selected property_id==propertynode.id">
+                            ( ${get_value(propertynode)} ${':'.join(propertynode.labels)})
+                    </option>
+                </select><br>
+
+            </span>
+        </div>
 
         <ul tal:condition="label_name=='Property'">
             <li>Labels auswählen</li>

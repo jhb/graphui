@@ -21,9 +21,9 @@
         <br>
         <div>&nbsp;</div>
 
-        <label for="type_name">Select source</label>
+        <label for="source_id">Select source</label>
         <select tal:define="
-                sourcenodes sorted([n for n in get_nodes()], key=lambda n: n['name']);
+                sourcenodes sorted([n for n in get_nodes()], key=lambda n: n.get('name',str(n.id)));
                 source_labels set(thetype.fl.inE('SOURCE').source['name']);
                 sourcenodes [tn for tn in sourcenodes if set(tn.labels).intersection(source_labels)];"
             id="source_id" name="source_id">
@@ -37,9 +37,9 @@
         </select>
         <br>
 
-        <label for="type_name">Select target</label>
+        <label for="target_id">Select target</label>
         <select tal:define="
-                targetnodes sorted([n for n in get_nodes()], key=lambda n: n['name']);
+                targetnodes sorted([n for n in get_nodes()], key=lambda n: n.get('name',str(n.id)));
                 target_labels set(thetype.fl.outE('TARGET').target['name']);
                 targetnodes [tn for tn in targetnodes if set(tn.labels).intersection(target_labels)];"
             id="target_id" name="target_id" >

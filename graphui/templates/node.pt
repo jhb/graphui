@@ -26,7 +26,7 @@
     <form>
         <div>&nbsp;</div>
         <br>
-        <label for="property_name">Add property</label>
+        <label for="property_name">Add property (not working yet)</label>
         <br>
         <select id="property_name">
             <option tal:repeat="propnode sorted([n for n in meta.nodes_by_label['Property'] if n['name'] not in node.keys()], key=lambda n: n['name'])"

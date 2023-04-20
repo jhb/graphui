@@ -17,7 +17,8 @@
         links: Object.values(resultdata.edges).map(edge => ({
             source: edge.source_id,
             target: edge.target_id,
-            type: edge.type
+            type: edge.type,
+            id: edge.id
         }))
     }
 
@@ -57,7 +58,7 @@
             // extend link with text sprite
             const sprite = new SpriteText(link.type);
             sprite.color = 'darkgray';
-            sprite.textHeight = 1.5;
+            sprite.textHeight = 2.5;
             return sprite;
         })
         .linkPositionUpdate((sprite, {start, end}) => {
@@ -67,6 +68,12 @@
 
             // Position sprite
             Object.assign(sprite.position, middlePos);
+        })
+        .onLinkClick(function (link, event) {
+            if (link) {
+                console.log(link);
+                edgedetails(link.id);
+            }
         })
         .graphData(data);
     //console.log(myGraph.cameraPosition());
