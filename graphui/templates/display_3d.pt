@@ -4,15 +4,28 @@
 </div>
 
 <script>
+
+
+    colors = {
+        'Label': '#C6460F',
+        'Relation': '#4FAAA7',
+        'Property': '#92A67A',
+        'default': '#F7892E'
+    }
+
+
     // The data as such
     var resultdata =${json.dumps(resultdicts, indent=2)};
+
+
 
     // Wrangle for this view
     var data = {
         nodes: Object.values(resultdata.nodes).map(node => ({
             id: node.id,
             name: node.nodename,
-            labels: node.labels
+            labels: node.labels,
+            color: colors[node.labels] || colors['default']
         })),
         links: Object.values(resultdata.edges).map(edge => ({
             source: edge.source_id,
@@ -22,6 +35,7 @@
         }))
     }
 
+
     // The actual view
 
     if (window.scene) {window.scene.clear(); delete window.scene}
@@ -30,7 +44,7 @@
         .width($('#display').width() - 10)
         .height($('#display').height())
         .numDimensions(3)
-        .nodeAutoColorBy('labels')
+        //.nodeAutoColorBy('labels')
         // .nodeColor(node => (node.color='#FF0000'))
         .backgroundColor("white")
         .onNodeClick(function (node, prevnode) {

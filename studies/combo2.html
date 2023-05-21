@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.0/dist/jquery.min.js"></script>
+    <script src="https://unpkg.com/htmx.org@1.9.2"></script>
+    <script src="https://unpkg.com/hyperscript.org@0.9.8"></script>
+    <link rel="stylesheet" href="../graphui.css"/>
+
+    <!-- UIkit JS -->
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.16.17/dist/js/uikit.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.16.17/dist/js/uikit-icons.min.js"></script>
+    <style>
+        body {
+            padding: 20px
+        }
+
+        dd {
+            margin-bottom: 10px
+        }
+
+        .clicked::after {
+            content: " ... Clicked!"
+        }
+
+    </style>
+    <script type="text/hyperscript">
+        def inputTemplate(value)
+            get #template's innerHTML as an String
+            return it.replaceAll('${value}',value)
+        end
+
+        def addSelection(e)
+            append inputTemplate(beep! e's innerHTML)  to #display
+            call #searchterm.focus()
+        end
+
+    </script>
+
+    <script>
+        function addSelection2(e) {
+            var value = $(e).html();
+            var rendered = $('#template').first().html().replaceAll('${value}', value);
+            $('#display').append(rendered)
+
+        }
+
+    </script>
+</head>
+<body>
+
+<form>
+    <div class="widget" _="
+        def addSelection3(e)
+            get #template's innerHTML
+            append its replaceAll('${value}',e.innerHTML) to #display">
+        <div id="display">
+            <span>first<input type="hidden" name="nodeselect" value="1"></span>
+            <span>second<input type="hidden" name="nodeselect" value="2"></span>
+        </div>
+        <div style="border: 1px solid black; width: 20em">
+        <div><input type="text" name="searchterm" id="searchterm" placeholder="type to find node"></div>
+        <div>
+            <ul>
+
+                <li _="on click append #template.innerHTML.replaceAll('${value}',my innerHTML) to #display then call #searchterm.focus()">Foo</li>
+                <li _="on click addSelection(me)">Bar</li>
+                <li _="on click addSelection3(me)">Bar3</li>
+                <li onClick="$('#display').append($('#template').first().html().replaceAll('${value}',$(this).html()))">
+                    Bla
+                </li>
+                <li onClick="addSelection2(this)">Blub</li>
+
+            </ul>
+        </div>
+            </div>
+        <div>Detail</div>
+    </div>
+    <div id="template" style="display: none">
+        <span>${value}<input type="hidden" name="nodeselect" value="${value}"></span>
+    </div>
+    <div><input type="submit"></div>
+</form>
+</body>
+</html>

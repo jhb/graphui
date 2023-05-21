@@ -31,7 +31,7 @@ body {
     margin: 0 auto;
     display: grid;
     grid-row-gap: 0px;
-    grid-template-columns: 200px auto 55ch;
+    grid-template-columns: 200px auto 60ch;
     grid-template-rows: 15% 75% 5%;
     grid-template-areas:
       "left input input"

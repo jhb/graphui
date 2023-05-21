@@ -129,11 +129,14 @@ def get_resultdata(resultset):
     return out
 
 
-def get_value(obj, keys=['name', 'title', 'id']):
+def get_value(obj, keys=['name', 'title', 'firstname','id']):
     for key in keys:
         if key in obj:
             return obj[key]
-    return 'unknown'
+    try:
+        return obj.id
+    except:
+        return 'unknown'
 
 
 def node2dict(node):

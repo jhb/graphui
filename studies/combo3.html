@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <link rel="stylesheet" href="../graphui.css"/>
+    <link rel="stylesheet" href="../jquery-flexdatalist/jquery.flexdatalist.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.0/dist/jquery.min.js"></script>
+    <script src="../jquery-flexdatalist/jquery.flexdatalist.js"></script>
+    <link href=""
+    <script src="https://unpkg.com/htmx.org@1.9.2"></script>
+    <script src="https://unpkg.com/hyperscript.org@0.9.8"></script>
+
+
+    <!-- UIkit JS -->
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.16.17/dist/js/uikit.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.16.17/dist/js/uikit-icons.min.js"></script>
+    <style>
+        body {
+            padding: 20px
+        }
+
+        dd {
+            margin-bottom: 10px
+        }
+
+        .clicked::after {
+            content: " ... Clicked!"
+        }
+
+    </style>
+</head>
+<body>
+
+<form>
+    <datalist id="source-nodes">
+        <option value="1">One</option>
+        <option value="2">Two</option>
+        <option value="3">Three</option>
+        <option value="4">Four</option>
+        <option value="5">Five</option>
+    </datalist>
+    <div><input name="source" list="source-nodes"></div>
+    <div><input type="submit"></div>
+</form>
+</body>
+</html>

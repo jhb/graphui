@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="https://unpkg.com/htmx.org@1.9.2"></script>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/uikit@3.16.17/dist/css/uikit.min.css"/>
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.16.17/dist/js/uikit.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.16.17/dist/js/uikit-icons.min.js"></script>
+    <style>
+
+        .nodeselect-input {
+            grid-area: input;
+        }
+
+        .nodeselect-selection {
+            grid-area: selection;
+                        overflow: auto;
+        }
+
+        .nodeselect-details {
+            grid-area: details;
+            overflow: auto;
+        }
+
+        .nodeselect-wrapper {
+            border: 1px solid red;
+            width: 100%;
+            height: 70vh;
+            max-width: 960px;
+            display: grid;
+            grid-column-gap: 20px;
+            grid-row-gap: 10px;
+            grid-template-columns: 2fr 2fr;
+            grid-template-areas:
+              "input    input"
+              "selection details";
+        }
+
+
+
+    </style>
+</head>
+<body class="uk-padding">
+
+Wähle einen Knoten: <span>( Knoten )</span><br>
+
+<form class="uk-search  uk-search-default xuk-width-1-4">
+    <div class="nodeselect-wrapper">
+        <div class="nodeselect-input">
+
+            <div><input class="uk-search-input"></div>
+        </div>
+        <ul class="nodeselect-selection uk-margin uk-list uk-overflow-auto">
+            <li>One<br>Lorem Ipsum</li>
+            <li>Two<br>Lorem Ipsum</li>
+            <li>Three<br>Lorem Ipsum</li>
+            <li>Four<br>Lorem Ipsum</li>
+            <li>Five<br>Lorem Ipsum</li>
+            <li>Six<br>Lorem Ipsum</li>
+            <li>Seven<br>Lorem Ipsum</li>
+        </ul>
+        <div class="nodeselect-details uk-margin">
+            <b>( some node)</b><br>
+            <dl class="uk-description-list">
+                <dt>Description term</dt>
+                <dd>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</dd>
+                <dt>Description term</dt>
+                <dd>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore
+                    et dolore magna aliqua.
+                </dd>
+                <dt>Description term</dt>
+                <dd>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore
+                    et dolore magna aliqua.
+                </dd>
+            </dl>
+
+
+        </div>
+    </div>
+</form>

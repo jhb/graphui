@@ -56,12 +56,8 @@ CREATE
                            widget: 'string',
                            graph: 'metaschema'}),
 
-(arity:Property           {name: 'arity',
-                           description: 'How many values (regex style)',
-                           widget: 'string',
-                           graph: 'metaschema'}),
 
-(person:Label             {name: 'Person',
+(human:Label             {name: 'Human',
                            description: 'A living human',
                            graph: 'metaschema'}),
 
@@ -81,13 +77,11 @@ CREATE
                            targetarity: '*',
                            graph: 'metaschema'}),
 
-(alice:Person             {name: 'alice',
-                           firstname: 'Alice',
+(alice:Human             { firstname: 'Alice',
                            lastname: 'Alison',
                            graph: 'metaschema'}),
 
-(bob:Person               {name: 'bob',
-                           firstname: 'Bob',
+(bob:Human               { firstname: 'Bob',
                            lastname: 'Bobson',
                            graph: 'metaschema'}),
 
@@ -102,16 +96,16 @@ CREATE
 (relation)-[:SOURCE]->(target),
 (relation)-[:PROP]->(description),
 (prop)-[:TARGET]->(property),
+(relation)-[:SOURCE]->(prop),
 (property)-[:PROP]->(description),
 (relation)-[:PROP]->(sourcearity),
 (relation)-[:PROP]->(targetarity),
 (property)-[:PROP]->(widget),
 
-(person)-[:PROP]->(firstname),
-(person)-[:PROP]->(lastname),
-(person)-[:SOURCE]->(likes),
-(likes)-[:TARGET]->(person),
-(person)-[:PROP]->(name),
+(human)-[:PROP]->(firstname),
+(human)-[:PROP]->(lastname),
+(human)-[:SOURCE]->(likes),
+(likes)-[:TARGET]->(human),
 
 (alice)-[:LIKES]->(bob),
 (bob)-[:LIKES]->(alice);

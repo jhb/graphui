@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="https://unpkg.com/htmx.org@1.9.2"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/uikit@3.16.17/dist/css/uikit.min.css" />
+
+<!-- UIkit JS -->
+<script src="https://cdn.jsdelivr.net/npm/uikit@3.16.17/dist/js/uikit.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/uikit@3.16.17/dist/js/uikit-icons.min.js"></script>
+    <style>
+        body {padding: 20px}
+        dd {margin-bottom: 10px}
+
+    </style>
+</head>
+<body>
+
+<form>
+Das Formular
+    <div id="widget" hx-trigger="load" hx-get="selection.html">Das widget</div>
+
+<select>
+    <option onmouseover="console.log('foo')">foo</option>
+    <option onmouseover="console.log('bar')">bar</option>
+</select>
+
+    <div onmouseover="console.log('test')">Test</div>
+</form>
+</body>
+</html>

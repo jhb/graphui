@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="en" xmlns="">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.0/dist/jquery.min.js"></script>
+    <script src="https://unpkg.com/htmx.org@1.9.2"></script>
+    <script src="https://unpkg.com/hyperscript.org@0.9.8"></script>
+    <link rel="stylesheet" href="graphui.css"/>
+
+    <!-- UIkit JS -->
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.16.17/dist/js/uikit.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.16.17/dist/js/uikit-icons.min.js"></script>
+    <style>
+        body {
+            padding: 20px
+        }
+
+        dd {
+            margin-bottom: 10px
+        }
+
+        .xselector {
+            width: min-content;
+
+            min-width: 20em;
+            xborder: 1px solid black;
+            box-shadow: 10px 5px 5px lightgrey;
+            display: none
+        }
+
+        .selector {
+            min-width: 30em;
+
+        }
+
+        .combowidget {
+            display: inline-block;
+        }
+
+        .comboinput {
+            width: 80%;
+        }
+
+        .choices {
+            overflow: auto;
+            max-height: 40vh;
+        }
+
+        .clicked::after {
+            content: " ... Clicked!"
+        }
+
+        .details {
+            box-shadow: 0px 5px 10px lightgrey;
+            width: fit-content;
+            min-width: 20em;
+            min-height: 5em;
+            display: none;
+            position: absolute;
+            background: white;
+            border: 1px solid lightgray;
+            padding: 10px;
+            z-index: 2000;
+        }
+
+        .add {
+            margin-left: 5px;
+        }
+
+        .combowidget .display {
+            border: 1px solid gray;
+            display: inline-block;
+            min-width: 20em;
+        }
+    </style>
+    <script type="text/hyperscript">
+        def inputTemplate(value)
+            get #template's innerHTML as an String
+            return it.replaceAll('${value}',value)
+        end
+
+        def addSelection(e)
+            append inputTemplate(beep! e's innerHTML)  to #display
+            call #searchterm.focus()
+        end
+
+
+
+
+
+
+
+
+    </script>
+
+    <script>
+
+        function addSelection2(e) {
+            console.log(e);
+            var c = $(e.target.parentElement).find('span').first();
+            var value = $(c).html();
+            var rendered = $('#template').first().html().replaceAll('${value}', value);
+            $('.display').append(rendered)
+
+        }
+
+        function details(e) {
+            // $('.comboinput').focus();
+            var details = $('.details');
+            details.css('left', e.pageX + 20);
+            details.css('top', e.pageY + 0);
+            details.show();
+        }
+
+    </script>
+</head>
+<body>
+
+<form>
+    Einträge:
+    <div class="combowidget">
+        <span class="display" onClick="$('.selector').toggle(); $('.selector input').val('').focus()">
+            <span class="element">One<input type="hidden" name="sourcenode" value="1"></span>
+        </span>
+        <div class="selector" uk-dropdown="delay-hide: 100; mode: click">
+            <input type="text" class="comboinput">
+            <div style="float: right" onClick="$('.selector').hide()">X &nbsp;</div>
+            <ul class="choices">
+                <li><span class="choice">One</span><span class="add">+</span> <br>Lorem ipsum dolor sit amet</li>
+                <li><span class="choice">Two</span><span class="add">+</span> <br>Lorem ipsum dolor sit amet</li>
+                <li><span class="choice">Three</span><span class="add">+</span> <br>Lorem ipsum dolor sit amet</li>
+                <li><span class="choice">Four</span><span class="add">+</span> <br>Lorem ipsum dolor sit amet</li>
+                <li><span class="choice">Five</span><span class="add">+</span> <br>Lorem ipsum dolor sit amet</li>
+                <li><span class="choice">Six</span><span class="add">+</span> <br>Lorem ipsum dolor sit amet</li>
+                <li><span class="choice">Seven</span><span class="add">+</span> <br>Lorem ipsum dolor sit amet</li>
+                <li><span class="choice">Eight</span><span class="add">+</span> <br>Lorem ipsum dolor sit amet</li>
+                <li><span class="choice">Nine</span><span class="add">+</span> <br>Lorem ipsum dolor sit amet</li>
+                <li><span class="choice">Ten</span><span class="add">+</span> <br>Lorem ipsum dolor sit amet</li>
+            </ul>
+            <script>
+                $('.choice').on('mouseenter', details).on('mouseleave', function () {
+                    console.log('foo');
+                    $('.details').hide()
+                });
+                $('.choices .add').on('click', addSelection2);
+                // $('.selector').show();
+
+            </script>
+        </div>
+        <div id="template" style="display: none">
+            <span>${value}<input type="hidden" name="nodeselect" value="${value}"></span>
+        </div>
+    </div>
+
+
+    <div>&nbsp;<br><input type="submit"></div>
+
+</form>
+<div class="details" xuk-drop="toggle: .nonexistent">Details</div>
+
+</body>
+</html>
