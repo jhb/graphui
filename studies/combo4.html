@@ -65,6 +65,7 @@
             border: 1px solid lightgray;
             padding: 10px;
             z-index: 2000;
+            max-width: 30em;
         }
 
         .add {
@@ -87,6 +88,7 @@
             append inputTemplate(beep! e's innerHTML)  to #display
             call #searchterm.focus()
         end
+
 
 
 
@@ -160,7 +162,24 @@
     <div>&nbsp;<br><input type="submit"></div>
 
 </form>
-<div class="details" xuk-drop="toggle: .nonexistent">Details</div>
+<div class="details" xuk-drop="toggle: .nonexistent">
+    <div class="nodeselect-details uk-margin">
+        <b>( some node)</b><br>
+        <dl class="uk-description-list">
+            <dt>Description term</dt>
+            <dd>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</dd>
+            <dt>Description term</dt>
+            <dd>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore
+                et dolore magna aliqua.
+            </dd>
+            <dt>Description term</dt>
+            <dd>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore
+                et dolore magna aliqua.
+            </dd>
+        </dl>
+
+
+    </div>
 
 </body>
 </html>
