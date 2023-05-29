@@ -115,6 +115,7 @@
             var details = $('.details');
             details.css('left', e.pageX + 20);
             details.css('top', e.pageY + 0);
+            // details.attr('uk-drop','target: !#one')
             details.show();
         }
 
@@ -132,7 +133,7 @@
             <input type="text" class="comboinput">
             <div style="float: right" onClick="$('.selector').hide()">X &nbsp;</div>
             <ul class="choices">
-                <li><span class="choice">One</span><span class="add">+</span> <br>Lorem ipsum dolor sit amet</li>
+                <li><span class="choice" id="one">One</span><span class="add">+</span> <br>Lorem ipsum dolor sit amet</li>
                 <li><span class="choice">Two</span><span class="add">+</span> <br>Lorem ipsum dolor sit amet</li>
                 <li><span class="choice">Three</span><span class="add">+</span> <br>Lorem ipsum dolor sit amet</li>
                 <li><span class="choice">Four</span><span class="add">+</span> <br>Lorem ipsum dolor sit amet</li>
@@ -144,10 +145,7 @@
                 <li><span class="choice">Ten</span><span class="add">+</span> <br>Lorem ipsum dolor sit amet</li>
             </ul>
             <script>
-                $('.choice').on('mouseenter', details).on('mouseleave', function () {
-                    console.log('foo');
-                    $('.details').hide()
-                });
+                $('.choice').on('mouseenter', details).on('mouseleave', $('.details').hide);
                 $('.choices .add').on('click', addSelection2);
                 // $('.selector').show();
 
@@ -162,7 +160,7 @@
     <div>&nbsp;<br><input type="submit"></div>
 
 </form>
-<div class="details" xuk-drop="toggle: .nonexistent">
+<div class="details" uk-drop="target: #one">
     <div class="nodeselect-details uk-margin">
         <b>( some node)</b><br>
         <dl class="uk-description-list">
@@ -180,6 +178,6 @@
 
 
     </div>
-
+</div>
 </body>
 </html>
