@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en" xmlns="">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.0/dist/jquery.min.js"></script>
+    <script src="https://unpkg.com/htmx.org@1.9.2"></script>
+    <script src="https://unpkg.com/hyperscript.org@0.9.8"></script>
+    <link rel="stylesheet" href="graphui.css"/>
+
+    <!-- UIkit JS -->
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.16.17/dist/js/uikit.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.16.17/dist/js/uikit-icons.min.js"></script>
+    <style>
+        body {
+            padding: 20px
+        }
+
+        .choices {
+            height: 300px;
+            overflow: auto;
+            padding: 20px;
+        }
+    </style>
+    <script type="text/hyperscript">
+    </script>
+
+    <script>
+
+    </script>
+</head>
+<body>
+
+<form>
+    Einträge:
+    <div class="combowidget" style="display: inline">
+        <span class="display">
+            <span class="element">One<input type="hidden" name="sourcenode" value="1"></span>
+        </span>
+        <div uk-dropdown="mode: click" class="selector">
+            <input type="text" class="comboinput">
+            <div style="float: right" onClick="$(this).parents('.combowidget').children('.display').trigger('click')">X &nbsp;</div>
+
+            <div hx-get="choices.html" hx-trigger="intersect" class="selector">
+                Load choices here
+            </div>
+        </div>
+
+        <div id="template" style="display: none">
+            <span>${value}<input type="hidden" name="nodeselect" value="${value}"></span>
+        </div>
+    </div>
+
+
+    <div>&nbsp;<br><input type="submit"></div>
+    <script>setTimeout(function () {
+        $('.display').trigger('click')
+    }, 1);</script>
+
+</form>
+<div id="detailtarget"></div>
+</body>
+</html>
