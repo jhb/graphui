@@ -295,9 +295,24 @@ def getMetaTime():
     print(f'Got metatime as {t}')
     return t
 
-@app.route('/test', methods=['GET', 'POST'])
-def test():
-    return tpl('test')
+@app.route('/nodetest', methods=['GET', 'POST'])
+def nodetest():
+    if request.method != 'POST':
+        return tpl('nodetest')
+
+@app.route('/nodeselection', methods=['GET','POST'])
+def nodeselection():
+    nodequery = request.values.get('nodequery', 'no nodequery')
+    try:
+        start = int(nodequery)
+    except:
+        start = 0
+    return tpl('choices', start=start, nodequery=nodequery)
+
+@app.route('/nodeinfo')
+def nodeinfo():
+    nodeid = request.values.get('nodeid','')
+    return tpl('nodeinfo',nodeid=nodeid)
 
 @app.route('/favicon.ico')
 def favicon():

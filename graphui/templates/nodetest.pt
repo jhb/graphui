@@ -6,15 +6,14 @@
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Document</title>
-    <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.0/dist/jquery.min.js"></script>
-    <script src="https://unpkg.com/htmx.org@1.9.2"></script>
-    <script src="https://unpkg.com/hyperscript.org@0.9.8"></script>
-    <link rel="stylesheet" href="graphui.css"/>
+    <script src="${url_for('static', filename='jquery-3.6.0.min.js')}"></script>
+    <script src="${url_for('static', filename='htmx.js')}"></script>
+    <script src="${url_for('static', filename='gui.js')}"></script>
+    <script src="${url_for('static', filename='uikit/js/uikit.min.js')}"></script>
+    <script src="${url_for('static', filename='uikit/js/uikit-icons.min.js')}"></script>
+    <link rel="stylesheet" href="${url_for('static', filename='graphuikit.css')}"/>
+    <link rel="shortcut icon" href="${url_for('static', filename='favicon.ico') }">
 
-    <!-- UIkit JS -->
-    <script src="https://cdn.jsdelivr.net/npm/uikit@3.16.17/dist/js/uikit.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/uikit@3.16.17/dist/js/uikit-icons.min.js"></script>
-    <script src="studies.js"></script>
     <style>
         body {
             padding: 20px
@@ -69,6 +68,9 @@
             width: 300px;
         }
 
+        .details {
+            overflow: auto;
+        }
     </style>
     <script type="text/hyperscript">
     </script>
@@ -81,32 +83,15 @@
 
 <form>
     Einträge:
-    <div class="combowidget">
-        <span class="display">
-            <span class="chevron" uk-icon="icon: chevron-down"></span>
-        </span>
-        <div uk-dropdown="toggle: .chevron; target: .display; mode: click" class="selector">
-            <label>
-                <input type="text" class="comboinput">
-            </label>
 
-            <div hx-get="choices.html" hx-trigger="intersect" class="selector">
-                Load choices here
-            </div>
-        </div>
-
-        <div id="template" style="display: none">
-            <span class="comboelement nodeinfo uk-visible-toggle" data-nodeid="${nodeid}">${value}
-                <span class="remove uk-invisible-hover" uk-icon="icon: minus-circle; ratio: 0.6"></span>
-                <input type="hidden" name="nodeselect" value="${value}">
-            </span>
-        </div>
-    </div>
-
+    <span metal:use-macro="templates.nodefinder.macros.widget" tal:define="choice_url 'nodeselection'; multiple 1; name 'node1' "></span>
 
     <div>&nbsp;<br><input type="submit"></div>
 
 </form>
+
+
+
 <span id="nodeinfo"
       style="z-index: 99999; display:none"
       class="details uk-card uk-card-default uk-card-body ">Loading Nodeinfo</span>
@@ -115,7 +100,7 @@
     $('#nodeinfo').on('mouseleave', () => nodeinfo_leave());
     $('#nodeinfo').on('mouseenter', () => nodeinfo_hide = false);
     setTimeout(() => $('.chevron').trigger('click'), 1);
-    setTimeout(() => $('.choice ~ .add').first().trigger('click'), 700);
+    setTimeout(() => $('.choice').first().trigger('click'), 700);
 
 
 </script>

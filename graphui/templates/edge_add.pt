@@ -32,7 +32,7 @@
                 title="${sourcenode['description']}"
                 value="${sourcenode.id}"
                  tal:attributes="selected source_id==sourcenode.id">
-                ( ${get_value(sourcenode)} ${':'.join(sourcenode.labels)})
+                ( ${get_value(sourcenode)} :${':'.join(sourcenode.labels)})
             </option>
         </select>
         <br>
@@ -48,7 +48,7 @@
                 title="${targetnode['description']}"
                 value="${targetnode.id}"
                  tal:attributes="selected target_id==targetnode.id">
-                ( ${get_value(targetnode)} ${':'.join(targetnode.labels)})
+                ( ${get_value(targetnode)} :${':'.join(targetnode.labels)})
             </option>
         </select>
 

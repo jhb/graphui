@@ -1,0 +1,11 @@
+<ul class="choices">
+    <li tal:repeat="i range(start,start+10)">
+        <span class="choice" data-nodeid="${i}"><span class="nodename">Node_${i}</span><br>Lorem ipsum dolor sit amet</span>
+        <span class="nodeinfo" data-nodeid="${i}">...</span>
+    </li>
+</ul>
+<script>
+    $('.comboinput').focus();
+    $('.choice').on('click', addSelection);
+    $('.nodeinfo').off('.nodeinfo').on('mouseover.nodeinfo', nodeinfo_show).on('mouseleave.nodeinfo', nodeinfo_leave);
+</script>

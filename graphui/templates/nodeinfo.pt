@@ -1,0 +1,15 @@
+<b>( some node)</b><br>
+<dl class="uk-description-list">
+    <dt>Foo</dt>
+    <dd>${nodeid}</dd>
+    <dt>Description term</dt>
+    <dd>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</dd>
+    <dt>Description term</dt>
+    <dd>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore
+        et dolore magna aliqua.
+    </dd>
+    <dt>Description term</dt>
+    <dd>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore
+        et dolore magna aliqua.
+    </dd>
+</dl>

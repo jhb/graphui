@@ -1,0 +1,31 @@
+<div class="combowidget" metal:define-macro="widget" tal:attributes="data-multiple multiple|nothing">
+        <span class="display">
+            <span class="chevron" uk-icon="icon: chevron-down"></span>
+        </span>
+    <div uk-dropdown="toggle: .chevron; target: .display; mode: click" class="selector">
+        <label>
+            <input  type="text"
+                    class="comboinput"
+                    hx-get="${choice_url}"
+                    hx-trigger="keyup changed delay:0.1s"
+                    hx-target=".choice_container"
+                    name="nodequery">
+        </label>
+
+        <div tal:attributes="hx-get choice_url" hx-trigger="intersect" class="choice_container">
+            Load choices here
+        </div>
+
+
+        <div id="template" style="display: none">
+            <span class="comboelement nodeinfo uk-visible-toggle" data-nodeid="$nodeid$">$value$
+                <span class="remove uk-invisible-hover" uk-icon="icon: minus-circle; ratio: 0.6"></span>
+                <input type="hidden" name="${name}" value="$value$">
+            </span>
+        </div>
+
+    </div>
+
+
+</div>
+

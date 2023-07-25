@@ -1,0 +1,11 @@
+<div tal:repeat='node nodes'>
+    <span metal:use-macro="templates['node_widget.pt'].macros.node"></span>
+    <div tal:repeat='item sorted(node.items())'>
+        <span tal:condition="item[0]!='_searchableText'"
+              tal:define="propnode meta.nln('Property',item[0])">
+            <span title="${propnode.get('description','*no description available*')}">${item[0]}</span>: ${item[1]}
+
+        </span>
+    </div>
+    <hr>
+</div>
